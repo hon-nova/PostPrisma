@@ -79,17 +79,37 @@ router.post("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __aw
     const { title, link, description, subgroup } = req.body;
     const user = req.user;
     (0, fake_db_1.editPost)(postId, { title, link, description, subgroup });
-    const updatedPost = (0, fake_db_1.getPost)(postId);
-    return res.redirect(`/posts/show/${postId}`);
+    // const updatedPost = getPost(postId)   
+    return res.redirect(`/posts/show/${postId}`); //DONE
 }));
 router.get("/deleteconfirm/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // ⭐ TODO
+    // ⭐ TODO    
+    const postId = Number(req.params.postid);
+    const postToDelete = (0, fake_db_1.getPost)(postId);
+    res.render('deleteConfirm', { post: postToDelete });
 }));
+/* `POST /posts/delete/:postid`
+- if cancelled, redirect back to the post
+- if successful, redirect back to the _sub that the post belonged to_
+*/
 router.post("/delete/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
+    // const postId = Number(req.params.postid)
+    // deletePost(postId)
+    // const post = getPost(postId)
+    // // if(!post) return res.redirect('/list')
+    // return res.redirect(`/list/${post.subgroup}`) //DONE
+    // ⭐ TODO
+    const postId = Number(req.params.postid);
+    const post = (0, fake_db_1.getPost)(postId);
+    (0, fake_db_1.deletePost)(postId);
+    //testing
+    const posts = Promise.all(yield (0, fake_db_1.getPosts)(20).map((post) => {
+        console.log(`all posts after delete: `, post);
+    }));
+    console.log(yield posts);
+    return res.redirect(`/subs/show/${post.subgroup}`);
 }));
-// /comment-create/<%= post.id %>
-// addComment(post_id: number, creator: number, description: string)
 router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
     const { description } = req.body;

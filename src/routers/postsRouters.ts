@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, getPostByCommentId, deleteComment, addComment } from "../fake-db";
+import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, getPostByCommentId, deleteComment, addComment, deletePost } from "../fake-db";
 
 router.get("/", async (req, res) => {
   const posts = await getPosts(20).map((post) => {
@@ -80,22 +80,45 @@ router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
   const user = req.user 
   
   editPost(postId, {title, link,description,subgroup})
-
-  const updatedPost = getPost(postId)   
+  // const updatedPost = getPost(postId)   
   
-  return res.redirect(`/posts/show/${postId}`);
+  return res.redirect(`/posts/show/${postId}`); //DONE
 });
 
 router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
+  // ⭐ TODO    
+  const postId = Number(req.params.postid)
+  const postToDelete = getPost(postId)
+  res.render('deleteConfirm', { post: postToDelete})
+  
 });
 
+/* `POST /posts/delete/:postid`
+- if cancelled, redirect back to the post
+- if successful, redirect back to the _sub that the post belonged to_
+*/
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
   // ⭐ TODO
+  // const postId = Number(req.params.postid)
+  // deletePost(postId)
+  // const post = getPost(postId)
+  // // if(!post) return res.redirect('/list')
+
+  // return res.redirect(`/list/${post.subgroup}`) //DONE
+  // ⭐ TODO
+  const postId = Number(req.params.postid)
+  const post = getPost(postId)
+
+  deletePost(postId)
+  //testing
+  const posts = Promise.all(await getPosts(20).map((post)=>{
+     console.log(`all posts after delete: `,post)
+  }))
+  console.log(await posts)
+  
+  return res.redirect(`/subs/show/${post.subgroup}`)  
 });
 
-// /comment-create/<%= post.id %>
-// addComment(post_id: number, creator: number, description: string)
 router.post(
   "/comment-create/:postid",
   ensureAuthenticated,

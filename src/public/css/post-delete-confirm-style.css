@@ -1,0 +1,10 @@
+.noBtn {
+   width: 344.77px;
+   height: 56px;
+   color: rgb(5, 100, 154);
+   border: 1px solid  rgb(5, 100, 154);
+   border-radius: 5px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
