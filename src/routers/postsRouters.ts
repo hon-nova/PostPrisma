@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/create", ensureAuthenticated, (req, res) => {
-  res.render("createPosts");
+  res.render("createPosts", {errorMsg : {}});
 });
 
 router.post("/create", ensureAuthenticated, async (req, res) => {
@@ -30,6 +30,18 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 	const userId = user?.id as number;
 	console.log(`userId in /create: `, userId);
 
+  let errorMsg: {[x:string]: string}={}
+
+  if(!title) errorMsg.title='Title is required.'
+  
+  if(!link) errorMsg.link ='URL link is required.'
+  
+  if(!description) errorMsg.description ='Please provide a description.'
+  
+  if(!subgroup) errorMsg.subgroup='Please provide a subgroup.'
+  if(Object.keys(errorMsg).length > 0){
+     return res.render('createPosts',{ errorMsg})
+  }
 	let posts = getPosts();
 
 	const subs = getSubs();
@@ -38,8 +50,8 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 	}
 	let newPost = addPost(title, link, userId, description, subgroup);
 	posts.unshift(newPost);
-
-	return res.redirect("/"); //DONE
+  // console.log(`newPost id randomly generated: `, newPost.id);
+	return res.redirect(`/posts/show/${newPost.id}`); //DONE
 });
 
 router.get("/show/:postid", async (req, res) => {

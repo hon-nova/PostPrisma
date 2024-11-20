@@ -27,7 +27,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.render("posts", { posts, user }); //DONE
 }));
 router.get("/create", checkAuth_1.ensureAuthenticated, (req, res) => {
-    res.render("createPosts");
+    res.render("createPosts", { errorMsg: {} });
 });
 router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
@@ -36,6 +36,18 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
     const user = req.user;
     const userId = user === null || user === void 0 ? void 0 : user.id;
     console.log(`userId in /create: `, userId);
+    let errorMsg = {};
+    if (!title)
+        errorMsg.title = 'Title is required.';
+    if (!link)
+        errorMsg.link = 'URL link is required.';
+    if (!description)
+        errorMsg.description = 'Please provide a description.';
+    if (!subgroup)
+        errorMsg.subgroup = 'Please provide a subgroup.';
+    if (Object.keys(errorMsg).length > 0) {
+        return res.render('createPosts', { errorMsg });
+    }
     let posts = (0, fake_db_1.getPosts)();
     const subs = (0, fake_db_1.getSubs)();
     if (!subs.includes(subgroup)) {
@@ -43,7 +55,8 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
     }
     let newPost = (0, fake_db_1.addPost)(title, link, userId, description, subgroup);
     posts.unshift(newPost);
-    return res.redirect("/"); //DONE
+    // console.log(`newPost id randomly generated: `, newPost.id);
+    return res.redirect(`/posts/show/${newPost.id}`); //DONE
 }));
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO	

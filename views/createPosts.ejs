@@ -21,22 +21,29 @@
       <div class="create-form">
          <form action="/posts/create" method="POST">
             <label id="title">Title</label>
-				<input type="text" name="title" placeholder="Enter Title" 
-				required
+				<input type="text" name="title" placeholder="Enter Title" 				
 				aria-label="Text">
+        <% if(errorMsg.title){ %>
+          <p style="color:red;"><%= errorMsg.title %></p>
+        <% } %>
 				<label id="link">Attached Link</label>
-				<input type="url" name="link" placeholder="Enter Url" 
-				required
+				<input type="url" name="link" placeholder="Enter Url" 				
 				aria-label="Text">
+				<% if(errorMsg.link){ %>
+					<p style="color:red;"><%= errorMsg.link %></p>
+				 <% } %>
 				<label id="description">Description</label>
 				<textarea type="text" name="description" placeholder="Enter Description" 
-				required
 				aria-label="Text"></textarea>
+				<% if(errorMsg.description){ %>
+					<p style="color:red;"><%= errorMsg.description %></p>
+				 <% } %>
 				<label id="subgroup">Subgroup</label>
-				<input type="text" name="subgroup"
-				required
-				placeholder="Enter Subgroup"
+				<input type="text" name="subgroup"	placeholder="Enter Subgroup"
 				aria-label="Text"/>
+				<% if(errorMsg.subgroup){ %>
+					<p style="color:red;"><%= errorMsg.subgroup %></p>
+				 <% } %>
 				 <button type="submit">Create Post</button>	
          </form>
       </div>

@@ -72,7 +72,7 @@ const comments: TComments = {
 		id:9003,
 		post_id:333,
 		creator: 3,
-		description: "LeerobMe, I really appreciate myself about the clarity and depth of this explanation",
+		description: "I really appreciate myself about the clarity and depth of this explanation",
 		timestamp: 1642691742010,
 	}	
 }

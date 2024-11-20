@@ -25,15 +25,20 @@
 			<% } %>   		 
 		</div>
 		<div class="showPost">
-			<ul>
+			<ul class="post-list">
 				<li><%= post.title %></li>
+				<% if( user && post.creator?.uname == user?.uname){ %>
+					<li class="move-right"><button><i class="bi bi-pen-fill" style="margin-right: 5px; color:green;"></i></button></li>
+					<li class="move-right"><button><i class="bi bi-trash3-fill" style="margin-right: 5px; color:red;"></i></button></li>
+				<% } %>
 				<li><a href="<%= post.link %>" target="_blank"><i class="bi bi-link-45deg"></i> Link</a></li>
 				<li><%= post.timestamp %></li>
 				<li>Poster: <span><%= post.creator?.uname %></span></li>
+				<div class="showComment">
 				<% if(post.comments.length>0) { %>
 					<% post.comments.forEach((c)=>{ %> 
-						<li><%= c.description %></li>
 						<li>Commenter: <span style="color:hotpink;"><%= c.creator?.uname %></span></li>
+						<li><%= c.description %></li>						
 						<li><%= c.timestamp %></li>
 						<% if(c.creator?.uname == user?.uname){ %>
 						<li class="delete-comment">
@@ -47,7 +52,7 @@
 				<% } else { %>
 					<p>No Comments Available Yet</p>
 				<% } %>
-				
+				</div>
 			</ul>			
 		</div>
 		<!-- comment -->
