@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { getPosts, getUser, getPost, getSubs, addPost,editPost } from "../fake-db";
+import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, getPostByCommentId, deleteComment, addComment } from "../fake-db";
 
 router.get("/", async (req, res) => {
   const posts = await getPosts(20).map((post) => {
@@ -58,8 +58,10 @@ router.get("/show/:postid", async (req, res) => {
 	// ⭐ TODO	
 	const postId = Number(req.params.postid);
 	const post = getPost(postId);
+  
+  const error = req.query.error || ''; 
 	// console.log(`post in individual post: `, post);
-	res.render("individualPost", { post, user: req.user }); //DONE
+	res.render("individualPost", { post, user: req.user,error }); //DONE
 });
 
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
@@ -93,18 +95,37 @@ router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
 });
 
 // /comment-create/<%= post.id %>
+// addComment(post_id: number, creator: number, description: string)
 router.post(
   "/comment-create/:postid",
   ensureAuthenticated,
   async (req, res) => {
     // ⭐ TODO
+    const { description } = req.body
+    const postid = Number(req.params.postid)
+    const user = req.user
+    const creator = user?.id as number
+    // const post = getPost(postid)
+    let error=''
+    if(!description) {
+      error="Please provide the comment content."
+      return res.redirect(`/posts/show/${postid}?error=${error}`)
+    }
+     
+    addComment(postid,creator,description)
+    return res.redirect(`/posts/show/${postid}`); //DONE
   }
 );
-
+// "/comment-delete/<%= c.id%>"
 router.post(
   "/comment-delete/:commentid",
   ensureAuthenticated,
-  async (req, res) => {}
+  async (req, res) => {
+    const commentid = Number(req.params.commentid);
+    const post = getPostByCommentId(commentid);
+    deleteComment(commentid);
+    return res.redirect(`/posts/show/${post.id}`); //DONE
+  }
 );
 
 export default router;

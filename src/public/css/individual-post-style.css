@@ -1,11 +1,15 @@
 ul > li {
-	list-style-type: none;
+	list-style: none;
 }
-div.showPost {
+div.showPost {	
 	border: 1px solid #ccc;
 	border-radius: 10px;
 	padding: 15px;
 	margin-bottom: 10px;
+}
+
+div.showPost ul li {
+	list-style: none;
 }
 .comment-form {
 	border: 1px solid #d0d0d5;
@@ -33,30 +37,8 @@ a.home {
 	margin-bottom: 5px;
 }
 
-.post-list {
-	padding: 0;
-	margin: 0;
-	display: block; 
-}
-.post-list li:first-child {
-	display: inline-block;
-	width: calc(80% - 10px); 
-}
 
-.post-list li:nth-child(-n+3) {
-	display: inline-block; 
-	margin-right: 10px; 
-}
-
-.post-list li:nth-child(2) {
-	margin-left: auto;
-}
-
-.post-list li:nth-child(n+4) {
-	display: block;
-	margin-top: 10px; 
-}
-.showComment {
+.showComment {	
 	border-left:5px dashed goldenrod;
 	border-right:5px dashed goldenrod;
 	border-radius: 10px;

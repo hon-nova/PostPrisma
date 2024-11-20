@@ -26,10 +26,12 @@
 		</div>
 		<div class="showPost">
 			<ul class="post-list">
-				<li><%= post.title %></li>
+				<span style="display:inline-block;margin-right:600px;"><li><%= post.title %></li></span>
 				<% if( user && post.creator?.uname == user?.uname){ %>
-					<li class="move-right"><button><i class="bi bi-pen-fill" style="margin-right: 5px; color:green;"></i></button></li>
+					<span style="display:inline-block;"><li class="move-right"><button ><i class="bi bi-pen-fill" style="margin-right: 5px; color:green;"></i></button></li></span>
+					<span style="display:inline-block;">
 					<li class="move-right"><button><i class="bi bi-trash3-fill" style="margin-right: 5px; color:red;"></i></button></li>
+				</span>
 				<% } %>
 				<li><a href="<%= post.link %>" target="_blank"><i class="bi bi-link-45deg"></i> Link</a></li>
 				<li><%= post.timestamp %></li>
@@ -41,12 +43,14 @@
 						<li><%= c.description %></li>						
 						<li><%= c.timestamp %></li>
 						<% if(c.creator?.uname == user?.uname){ %>
+							
 						<li class="delete-comment">
-							<form action="/comment-delete/<%= c.id%>" method="POST">
+						
+							<form action="/posts/comment-delete/<%= c.id%>" method="POST">
 								<button type="submit"> <i class="bi bi-trash3-fill" style="margin-right: 5px; color:red;"></i>Delete Comment</button>
 							</form>
 						</li>
-							
+						<hr/>							
 						<% } %>
 					 <%}) %>
 				<% } else { %>
@@ -56,11 +60,15 @@
 			</ul>			
 		</div>
 		<!-- comment -->
-		 <% if(user) { %>
+		 <% if(user) { %>			
 		 <div class="comment-form">
-			<form action="/comment-create/<%= post.id %>" method="POST">
+			<form action="/posts/comment-create/<%= post.id %>" method="POST">
+				<% if(error) { %>
+					<div style="text-align:center;"><span style="color:red;"><%= error %></span></div>					
+				<% } %>
 				<textarea name="description" id="description" cols="30" rows="3" placeholder="Write your comment..."></textarea>
-				<button type="submit" id="btnSend"><i class="bi bi-chat-dots-fill" style="margin-right:5px;"></i>Send Comment</button>
+				
+				<button type="submit" id="btnSend"><i class="bi bi-chat-dots-fill" style="margin-right:5px;"></i>Add Comment</button>
 		 </div>
 		 <% } %>
 	</main>

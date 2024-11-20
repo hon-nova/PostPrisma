@@ -62,8 +62,9 @@ router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, func
     // ⭐ TODO	
     const postId = Number(req.params.postid);
     const post = (0, fake_db_1.getPost)(postId);
+    const error = req.query.error || '';
     // console.log(`post in individual post: `, post);
-    res.render("individualPost", { post, user: req.user }); //DONE
+    res.render("individualPost", { post, user: req.user, error }); //DONE
 }));
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
@@ -88,8 +89,27 @@ router.post("/delete/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __
     // ⭐ TODO
 }));
 // /comment-create/<%= post.id %>
+// addComment(post_id: number, creator: number, description: string)
 router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
+    const { description } = req.body;
+    const postid = Number(req.params.postid);
+    const user = req.user;
+    const creator = user === null || user === void 0 ? void 0 : user.id;
+    // const post = getPost(postid)
+    let error = '';
+    if (!description) {
+        error = "Please provide the comment content.";
+        return res.redirect(`/posts/show/${postid}?error=${error}`);
+    }
+    (0, fake_db_1.addComment)(postid, creator, description);
+    return res.redirect(`/posts/show/${postid}`); //DONE
 }));
-router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+// "/comment-delete/<%= c.id%>"
+router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const commentid = Number(req.params.commentid);
+    const post = (0, fake_db_1.getPostByCommentId)(commentid);
+    (0, fake_db_1.deleteComment)(commentid);
+    return res.redirect(`/posts/show/${post.id}`); //DONE
+}));
 exports.default = router;
