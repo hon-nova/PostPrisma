@@ -51,6 +51,15 @@ const posts = {
         creator: 4,
         subgroup: "coding",
         timestamp: 1642611742010,
+    },
+    333: {
+        id: 333,
+        title: "Exploring AI Trends in 2024",
+        link: "https://www.ibm.com/think/insights/artificial-intelligence-trends",
+        description: "A detailed analysis of emerging AI technologies shaping the future.",
+        creator: 3,
+        subgroup: "technology",
+        timestamp: 1700462345000,
     }
 };
 const comments = {
@@ -59,6 +68,20 @@ const comments = {
         post_id: 102,
         creator: 1,
         description: "Actually I learned a lot.",
+        timestamp: 1642691742010,
+    },
+    9002: {
+        id: 9002,
+        post_id: 101,
+        creator: 1,
+        description: "This is a fantastic post! It’s well-researched and provides valuable insights",
+        timestamp: 1642691742010,
+    },
+    9003: {
+        id: 9003,
+        post_id: 333,
+        creator: 3,
+        description: "LeerobMe, I really appreciate myself about the clarity and depth of this explanation",
         timestamp: 1642691742010,
     }
 };

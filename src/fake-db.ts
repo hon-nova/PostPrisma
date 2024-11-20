@@ -42,6 +42,15 @@ const posts: TPosts = {
 		creator: 4,
 		subgroup: "coding",
 		timestamp: 1642611742010,
+	 },
+	 333: {
+		id: 333,
+		title: "Exploring AI Trends in 2024",
+		link: "https://www.ibm.com/think/insights/artificial-intelligence-trends",
+		description: "A detailed analysis of emerging AI technologies shaping the future.",
+		creator: 3,
+		subgroup: "technology",
+		timestamp: 1700462345000,
 	 }
 }
 const comments: TComments = {
@@ -50,6 +59,20 @@ const comments: TComments = {
 		post_id:102,
 		creator:1,
 		description:"Actually I learned a lot.",
+		timestamp: 1642691742010,
+	},
+	9002: {
+		id:9002,
+		post_id:101,
+		creator: 1,
+		description: "This is a fantastic post! It’s well-researched and provides valuable insights",
+		timestamp: 1642691742010,
+	},
+	9003: {
+		id:9003,
+		post_id:333,
+		creator: 3,
+		description: "LeerobMe, I really appreciate myself about the clarity and depth of this explanation",
 		timestamp: 1642691742010,
 	}	
 }
@@ -99,7 +122,7 @@ const votes: TVotes = [
   * @param {*} n how many posts to get, defaults to 5
   * @param {*} sub which sub to fetch, defaults to all subs
   */
- function getPosts(n = 5, sub = undefined) {
+ function getPosts(n = 5, sub : string |undefined = undefined) {
 	let allPosts = Object.values(posts);
 	if (sub) {
 	  allPosts = allPosts.filter((post) => post.subgroup === sub);

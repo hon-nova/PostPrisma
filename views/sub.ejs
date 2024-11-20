@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
+    />
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+  />
+  <link rel="stylesheet" href="/css/sub-style.css">
+
+    <link href="/css/style.css" rel="stylesheet" />
+    <title>Sub posts</title>
+  </head>
+  <body>
+    <main>
+      <div class="authOptions">
+        <h1>Sub Posts</h1>
+        <a role="button" href="/posts">Home</a>
+      </div>
+      <div>
+        <% if(posts) { %>
+            <% posts.map((p)=>{ %>
+              <div class="sub">
+               <ul>
+                  <li><%= p.title %></li>
+                  <li><a href="<%= p.link %>" target="_blank"><i class="bi bi-link-45deg"></i> Link</a></li>
+                  <li><%= p.description %></li>
+                  <li><i>#<%= p.subgroup %></i></li>
+                  <li><%= p.timestamp %></li>
+               </ul>
+              </div>
+               <hr />
+            <% }) %>
+        <% } %>
+      </div>
+    </main>
+  </body>
+</html>

@@ -17,9 +17,14 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const fake_db_1 = require("../fake-db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield (0, fake_db_1.getPosts)(20);
+    const posts = yield (0, fake_db_1.getPosts)(20).map((post) => {
+        // console.log(`creator object: `,getUser(post.creator))
+        // console.log(`each return post: `,{...post, creator:getUser(post.creator)})
+        return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator) });
+    });
+    // console.log(`posts: `,posts)
     const user = yield req.user;
-    res.render("posts", { posts, user });
+    res.render("posts", { posts, user }); //DONE
 }));
 router.get("/create", checkAuth_1.ensureAuthenticated, (req, res) => {
     res.render("createPosts");

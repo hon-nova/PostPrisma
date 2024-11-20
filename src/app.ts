@@ -2,6 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import passport from './middleware/passport'
 import path from 'path'
+import { debug } from './fake-db'
 const  PORT = process.env.PORT || 8000
 
 
@@ -26,6 +27,7 @@ app.use(session({
 import indexRoute from './routers/indexRoute'
 import authRoute from './routers/authRoute'
 import postsRoute from './routers/postsRouters'
+import subsRoute from './routers/subsRouter'
 
 
 app.use(express.json())
@@ -36,6 +38,9 @@ app.use(passport.session())
 app.use('/',indexRoute)
 app.use('/auth',authRoute)
 app.use('/posts',postsRoute)
+app.use('/subs', subsRoute)
+// debug()
+
 
 app.listen(PORT, () => {
 	console.log(`HI AGAIN, Server is running at: http://localhost:${PORT}`)

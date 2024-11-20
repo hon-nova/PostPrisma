@@ -25,13 +25,14 @@
       <div>
         <p>All Posts</p>
         <% posts.forEach(post => { %>
+
         <div class="individualPost">
+          <h3 style="margin:0;"><%= post.creator?.uname %></h3>
           <a href="/posts/show/<%=post.id%>"><%= post.title %></a>
           <p><%= post.description %></p>
         </div>
         <% }) %>
       </div>
-
       <div>
         <a href="/subs/list">Subgroups</a>
       </div>

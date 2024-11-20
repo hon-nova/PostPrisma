@@ -1,12 +1,20 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { getPosts } from "../fake-db";
+import { getPosts,getUser } from "../fake-db";
 
 router.get("/", async (req, res) => {
-  const posts = await getPosts(20);
+  const posts = await getPosts(20).map((post)=> {
+    // console.log(`creator object: `,getUser(post.creator))
+    // console.log(`each return post: `,{...post, creator:getUser(post.creator)})
+    return {
+      ...post,
+      creator:getUser(post.creator)
+    }
+  })
+  // console.log(`posts: `,posts)
   const user = await req.user;
-  res.render("posts", { posts, user });
+  res.render("posts", { posts, user }); //DONE
 });
 
 router.get("/create", ensureAuthenticated, (req, res) => {
