@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
+    />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/post-edit-style.css">
+    <title>Edit Post</title>
+  </head>
+  <body>
+    <main>
+      <div class="authOptions">
+        <h1>Edit Post</h1>
+        <a role="button" href="/posts">Home</a>
+      </div>
+      <div class="edit-form">
+         <% if (post) { %>
+            <form action="/posts/edit/<%= post.id %>" method="POST">
+               <label id="title">Title</label>
+               <input type="text" name="title" value="<%= post.title%>" placeholder="Enter Title" class="edit-input"
+               required
+               aria-label="Text">
+               <label id="link">Attached Link</label>
+               <input type="url" name="link" placeholder="Enter Url" value="<%= post.link %>"
+               required class="edit-input"
+               aria-label="Text">
+               <label id="description">Description</label>
+               <textarea type="text" name="description" placeholder="Enter Description" 
+               required class="edit-input"
+               aria-label="Text"><%= post.description%></textarea>
+               <label id="subgroup">Subgroup</label>
+               <input type="text" name="subgroup"
+               required class="edit-input"
+               placeholder="Enter Subgroup"
+               value="<%= post.subgroup %>"
+               aria-label="Text"/>
+                <button type="submit">Update Post</button>	
+            </form>
+         <% } %>        
+      </div>
+      </main>
+   </body>
+   </html>
