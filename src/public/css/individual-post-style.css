@@ -1,0 +1,32 @@
+ul > li {
+	list-style-type: none;
+}
+div.showPost {
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	padding: 15px;
+	margin-bottom: 10px;
+}
+.comment-form {
+	border: 1px solid #d0d0d5;
+	border-radius: 10px;
+	padding: 10px
+}
+#btnSend {
+	width:150px;
+	margin:auto;	
+}
+
+li.delete-comment {
+	width: 250px;	
+}
+a.home {
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	width: 89.2px;
+	height:53px;
+	color: white;
+	background-color:  hsl(195, 80%, 50%);
+	border-radius: 5px;
+}

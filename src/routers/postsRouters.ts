@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { getPosts,getUser } from "../fake-db";
+import { getPosts,getUser, getPost } from "../fake-db";
 
 router.get("/", async (req, res) => {
   const posts = await getPosts(20).map((post)=> {
@@ -27,7 +27,18 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 
 router.get("/show/:postid", async (req, res) => {
   // ⭐ TODO
-  res.render("individualPost");
+  /*
+  - `GET /posts/show/:postid`
+    - shows post title, post link, timestamp, and creator
+    - also has a list of _all comments_ related to this post
+      - each of these should show the comment description, creator, and timestamp
+      - optionally, each comment could have a link to delete it
+    - if you're logged in, a form for commenting should show
+  */
+  const postId = Number(req.params.postid)
+  const post = getPost(postId)
+  console.log(`post in individual post: `,post)
+  res.render("individualPost",{ post, user: req.user });
 });
 
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
@@ -53,5 +64,6 @@ router.post(
     // ⭐ TODO
   }
 );
+router.post("/comment-delete/:commentid", ensureAuthenticated, async (req, res) => {  })
 
 export default router;

@@ -34,7 +34,18 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
 }));
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
-    res.render("individualPost");
+    /*
+    - `GET /posts/show/:postid`
+      - shows post title, post link, timestamp, and creator
+      - also has a list of _all comments_ related to this post
+        - each of these should show the comment description, creator, and timestamp
+        - optionally, each comment could have a link to delete it
+      - if you're logged in, a form for commenting should show
+    */
+    const postId = Number(req.params.postid);
+    const post = (0, fake_db_1.getPost)(postId);
+    console.log(`post in individual post: `, post);
+    res.render("individualPost", { post, user: req.user });
 }));
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
@@ -51,4 +62,5 @@ router.post("/delete/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __
 router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
 }));
+router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
 exports.default = router;

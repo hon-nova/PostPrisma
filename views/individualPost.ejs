@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=edit_square" />  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
+   <link href="/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/individual-post-style.css">
+    <title>Individual Post</title>
+  </head>
+  <body>
+    <main>
+      <div class="authOptions">  
+			<a href="/" class="home">Home</a>
+			<% if(user) { %>
+				<h3>You're logging in as <span style="color:hotpink;"><%= user?.uname%></span></h3>	 
+			<% } %>   		 
+		</div>
+		<div class="showPost">
+			<ul>
+				<li><%= post.title %></li>
+				<li><a href="<%= post.link %>" target="_blank"><i class="bi bi-link-45deg"></i> Link</a></li>
+				<li><%= post.timestamp %></li>
+				<li>Poster: <span><%= post.creator?.uname %></span></li>
+				<% if(post.comments.length>0) { %>
+					<% post.comments.forEach((c)=>{ %> 
+						<li><%= c.description %></li>
+						<li>Commenter: <span style="color:hotpink;"><%= c.creator?.uname %></span></li>
+						<li><%= c.timestamp %></li>
+						<% if(c.creator?.uname == user?.uname){ %>
+						<li class="delete-comment">
+							<form action="/comment-delete/<%= c.id%>" method="POST">
+								<button type="submit"> <i class="bi bi-trash3-fill" style="margin-right: 5px; color:red;"></i>Delete Comment</button>
+							</form>
+						</li>
+							
+						<% } %>
+					 <%}) %>
+				<% } else { %>
+					<p>No Comments Available Yet</p>
+				<% } %>
+				
+			</ul>			
+		</div>
+		<!-- comment -->
+		 <% if(user) { %>
+		 <div class="comment-form">
+			<form action="/comment-create/<%= post.id %>" method="POST">
+				<textarea name="description" id="description" cols="30" rows="3" placeholder="Write your comment..."></textarea>
+				<button type="submit" id="btnSend">Send</button>
+		 </div>
+		 <% } %>
+	</main>
+	</body>
+	</html>
