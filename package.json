@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {    
-    "start":"nodemon dist/app.js",
+    "start":"tsc --watch & nodemon dist/app.js",
     "db":"npx prisma db push",
     "studio":"npx prisma studio"
   },
