@@ -14,12 +14,7 @@
   <body>
     <main>
       <div class="box">
-        <h1>Login</h1>
-        <div>
-          <% if(messages) { %> 
-            <p style="color:red;"><%= messages %> </p>
-          <% } %>
-        </div>
+        <h1>Login</h1>        
         <form action="/auth/login" method="post">
           <input type="text" name="uname" id="uname" placeholder="Username" />
           <input

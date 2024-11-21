@@ -32,9 +32,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getUserByEmailAndPassword = void 0;
+exports.getUserById = exports.getUserByEmailIdAndPassword = void 0;
 const db = __importStar(require("../fake-db"));
-const getUserByEmailAndPassword = (uname, password) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserByEmailIdAndPassword = (uname, password) => __awaiter(void 0, void 0, void 0, function* () {
     let user = db.getUserByUsername(uname);
     if (user) {
         if (user.password === password) {
@@ -45,7 +45,7 @@ const getUserByEmailAndPassword = (uname, password) => __awaiter(void 0, void 0,
         }
     }
 });
-exports.getUserByEmailAndPassword = getUserByEmailAndPassword;
+exports.getUserByEmailIdAndPassword = getUserByEmailIdAndPassword;
 const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     let user = db.getUser(id);
     return user ? user : null;

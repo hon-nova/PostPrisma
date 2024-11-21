@@ -1,6 +1,6 @@
 import * as db from '../fake-db'
 
-export const getUserByEmailAndPassword = async(uname: string, password: string)=>{
+export const getUserByEmailIdAndPassword = async(uname: string, password: string)=>{
 	let user = db.getUserByUsername(uname)
 	if(user){
 		if(user.password === password){

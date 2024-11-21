@@ -15,21 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
 const userController_1 = require("../controller/userController");
+// ⭐ TODO: Passport Types
 const localLogin = new passport_local_1.Strategy({
-    usernameField: 'uname',
-    passwordField: 'password'
+    usernameField: "uname",
+    passwordField: "password",
 }, (uname, password, done) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield (0, userController_1.getUserByEmailAndPassword)(uname, password);
-    if (!user) {
-        return done(null, false, { message: `Couldn't find user with username: ${uname}. Please try again.` });
-    }
-    if (user.password !== password) {
-        return done(null, false, { message: `Password is incorrect.` });
-    }
-    return done(null, user);
+    // Check if user exists in databse
+    const user = yield (0, userController_1.getUserByEmailIdAndPassword)(uname, password);
+    return user
+        ? done(null, user)
+        : done(null, false, {
+            message: "Your login details are not valid. Please try again.",
+        });
 }));
+// ⭐ TODO: Passport Types
 passport_1.default.serializeUser(function (user, done) {
-    console.log(`user type Express.User: `, user);
     done(null, user.id);
 });
 passport_1.default.deserializeUser(function (id, done) {
@@ -39,7 +39,7 @@ passport_1.default.deserializeUser(function (id, done) {
             done(null, user);
         }
         else {
-            done({ message: "User Not Found." }, null);
+            done({ message: "User not found" }, null);
         }
     });
 });
