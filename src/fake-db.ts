@@ -207,9 +207,22 @@ async function deleteComment(commentid:number){
       delete comments[commentToDelete.id]
    }
 }
-// (async () => {
-// 	console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
-// })();
+
+const netVotesByPost = (postId:number): number=>{
+  let votes = getVotesForPost(postId)
+  let netVotes = votes.reduce((acc,{value})=> acc + value,0)
+  
+  return netVotes
+}
+  
+(async () => {  
+  // } getVotesForPost(101);
+	// console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
+  // console.log(`getVotesForPost(101): `,getVotesForPost(101))
+  // console.log(`getVotesForPost(102): `,getVotesForPost(102))
+  // console.log(`netVotesByPost(101): `,netVotesByPost(101))
+  // console.log(`netVotesByPost(102): `,netVotesByPost(102))
+})();
 
 function addComment(post_id: number, creator: number, description: string) {
   let id = Math.max(...Object.keys(comments).map(Number)) + 1;
@@ -238,5 +251,7 @@ export {
   decoratePost,
   getComments,
   getPostByCommentId,
-  deleteComment
+  deleteComment,
+  getVotesForPost,
+  netVotesByPost
 };

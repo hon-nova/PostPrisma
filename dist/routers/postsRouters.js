@@ -17,14 +17,16 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const fake_db_1 = require("../fake-db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postid, setvoteto } = req.session.voteData || {};
+    //   (req.session as any).voteData = null; // Clear after use
+    console.log("Session data from root /:", { postid, setvoteto });
     const posts = yield (0, fake_db_1.getPosts)(20).map((post) => {
-        // console.log(`creator object: `,getUser(post.creator))
-        // console.log(`each return post: `,{...post, creator:getUser(post.creator)})
-        return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator) });
+        console.log(`object: `, Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null }));
+        return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null });
     });
     // console.log(`posts: `,posts)
     const user = yield req.user;
-    res.render("posts", { posts, user }); //DONE
+    res.render("posts", { posts, user });
 }));
 router.get("/create", checkAuth_1.ensureAuthenticated, (req, res) => {
     res.render("createPosts", { errorMsg: {} });
@@ -55,7 +57,6 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
     }
     let newPost = (0, fake_db_1.addPost)(title, link, userId, description, subgroup);
     posts.unshift(newPost);
-    // console.log(`newPost id randomly generated: `, newPost.id);
     return res.redirect(`/posts/show/${newPost.id}`); //DONE
 }));
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -88,17 +89,7 @@ router.get("/deleteconfirm/:postid", checkAuth_1.ensureAuthenticated, (req, res)
     const postToDelete = (0, fake_db_1.getPost)(postId);
     res.render('deleteConfirm', { post: postToDelete });
 }));
-/* `POST /posts/delete/:postid`
-- if cancelled, redirect back to the post
-- if successful, redirect back to the _sub that the post belonged to_
-*/
 router.post("/delete/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // ⭐ TODO
-    // const postId = Number(req.params.postid)
-    // deletePost(postId)
-    // const post = getPost(postId)
-    // // if(!post) return res.redirect('/list')
-    // return res.redirect(`/list/${post.subgroup}`) //DONE
     // ⭐ TODO
     const postId = Number(req.params.postid);
     const post = (0, fake_db_1.getPost)(postId);
@@ -125,11 +116,24 @@ router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, re
     (0, fake_db_1.addComment)(postid, creator, description);
     return res.redirect(`/posts/show/${postid}`); //DONE
 }));
-// "/comment-delete/<%= c.id%>"
 router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const commentid = Number(req.params.commentid);
     const post = (0, fake_db_1.getPostByCommentId)(commentid);
     (0, fake_db_1.deleteComment)(commentid);
     return res.redirect(`/posts/show/${post.id}`); //DONE
+}));
+/* So you'll need to add at least this route:
+
+- `POST /posts/vote/:postid/`
+- uses a body field `setvoteto` to set vote to +1, -1, or 0, overriding previous vote
+- redirects back to `GET /posts/show/:postid`
+*/
+router.post('/vote/:postid', checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postid = Number(req.params.postid);
+    const setvoteto = Number(req.body.setvoteto);
+    console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
+    req.session.voteData = { postid, setvoteto };
+    // return res.redirect('/')  
+    return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`);
 }));
 exports.default = router;
