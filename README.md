@@ -1,19 +1,25 @@
-## Intro. to Post Project
+# Introduction to Post Project
 
-### Key Features:
-#### User Authentication with Passport.js:
+## Key Features:
 
-A. Login: Users can log in using their credentials, which are authenticated using Passport.js.
+### 1. User Authentication with Passport.js
+- **Login**: Users log in securely using Passport.js.
 
-1. Create Posts: Authenticated users can create new posts with a title, description, and link.
-2. View Posts: All users can view the posts, including the creator’s information.
-3. Edit and Delete Posts: Users can edit or delete their own posts. This feature is only available for the creator of the post.
-Comment System:
+### 2. Post Management
+- **Create Posts**: Authenticated users can create posts with a title, description, and link.
+- **View Posts**: All users can view posts, including creator details.
+- **Edit/Delete Posts**: Users can edit or delete their own posts.
 
-4. Add Comments: Users can add comments to posts, but they must provide content (validated by the backend). If no content is entered, an error message is shown.
-Delete Comments: Users can delete comments they have created. This functionality ensures that only the comment’s creator can delete their comment.
-Dynamic Error Handling:
+### 3. Comment System
+- **Add Comments**: Users can comment on posts with backend-validated content.
+- **Delete Comments**: Only comment creators can delete their comments.
 
-B. Form Validation: The application checks for missing or incorrect data when submitting forms (e.g., creating posts, comments). If validation fails, an error message is displayed to the user.
-C. Error Display: Error messages (e.g., empty comment content) are passed to the front end and displayed dynamically, allowing for user-friendly error handling.
+### 4. Dynamic Error Handling
+- **Form Validation**: Input fields for posts and comments are validated, with error messages displayed for invalid submissions.
+- **Error Display**: Errors are dynamically shown on the front end for better usability.
+
+### 5. Vote Functionality
+- Users can upvote or downvote posts.
+
+
 
