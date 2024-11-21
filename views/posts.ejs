@@ -34,19 +34,18 @@
               <a href="/posts/show/<%=post.id%>" style="margin:0;"><%= post.title %></a>
               <span style="display:flex;justify-content: space-between;">
 						<form action="/posts/vote/<%= post.id %>" method="POST">
-							<input type="hidden" name="setvoteto" value="+1" />
-							<button type="submit" style="background-color:transparent;border:none;width:20px;height:20px;"> <i class="bi bi-hand-thumbs-down"></i></button>
+							<input type="hidden" name="setvoteto" value="-1" />
+							<button type="submit" style="background-color:transparent;border:none;width:20px;height:20px;"> <i class="bi bi-hand-thumbs-down <%= post.setvoteto === -1 ? 'downVote': 'neutral' %>"></i></button>
 						</form>
 						<form action="/posts/vote/<%= post.id %>" method="POST">
-							<input type="hidden" name="setvoteto" value="-1" />
-							<button type="submit" style="background-color:transparent;border:none;;width:20px;height:20px;margin-right:10px;">
-								<i class="bi bi-hand-thumbs-up"></i>
+							<input type="hidden" name="setvoteto" value="+1" />
+							<button type="submit" style="background-color:transparent;border:none;;width:20px;height:20px;margin-right:30px;">
+								<i class="bi bi-hand-thumbs-up <%= post.setvoteto === 1 ? 'upVote':'neutral'%>"></i>
 							</button>
 						</form> 
-						<div style="display:flex;text-align:center;align-items:center;">
-							<p>NetVotes:<%= %> </p>
-						</div>               
-                 
+						<div style="display:flex;text-align:center;align-items:center;margin-top:10px;">							
+							<p><%= post.currentNetVotes %></p>
+						</div> 
               </span>
             </div>
           <% } %>          

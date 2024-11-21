@@ -1,0 +1,9 @@
+.upVote {
+	color: rgb(218, 205, 26)
+}
+.downVote {
+	color:red;
+}
+.neutral {
+	color: transparent;
+}

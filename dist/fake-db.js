@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.netVotesByPost = void 0;
 exports.debug = debug;
 exports.getUser = getUser;
 exports.getUserByUsername = getUserByUsername;
@@ -23,6 +24,7 @@ exports.decoratePost = decoratePost;
 exports.getComments = getComments;
 exports.getPostByCommentId = getPostByCommentId;
 exports.deleteComment = deleteComment;
+exports.getVotesForPost = getVotesForPost;
 const users = {
     1: {
         id: 1,
@@ -192,9 +194,20 @@ function deleteComment(commentid) {
         }
     });
 }
-// (async () => {
-// 	console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
-// })();
+const netVotesByPost = (postId) => {
+    let votes = getVotesForPost(postId);
+    let netVotes = votes.reduce((acc, { value }) => acc + value, 0);
+    return netVotes;
+};
+exports.netVotesByPost = netVotesByPost;
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    // } getVotesForPost(101);
+    // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
+    // console.log(`getVotesForPost(101): `,getVotesForPost(101))
+    // console.log(`getVotesForPost(102): `,getVotesForPost(102))
+    // console.log(`netVotesByPost(101): `,netVotesByPost(101))
+    // console.log(`netVotesByPost(102): `,netVotesByPost(102))
+}))();
 function addComment(post_id, creator, description) {
     let id = Math.max(...Object.keys(comments).map(Number)) + 1;
     let comment = {
