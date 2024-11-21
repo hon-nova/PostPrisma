@@ -1,9 +1,10 @@
-.upVote {
-	color: rgb(218, 205, 26)
+button i.bi.bi-hand-thumbs-up.upVote {
+	color: #FFDE21 !important;
 }
-.downVote {
-	color:red;
+button i.bi.bi-hand-thumbs-down.downVote {
+	color:red !important;
 }
-.neutral {
-	color: transparent;
+button i.bi.bi-hand-thumbs-down.neutral,
+button i.bi.bi-hand-thumbs-up.neutral {
+  color: transparent !important;
 }

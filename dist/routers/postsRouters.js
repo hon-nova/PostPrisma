@@ -17,10 +17,9 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const fake_db_1 = require("../fake-db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Query params:", req.query);
-    const setvoteto = Number(req.query.setvoteto) || null;
-    console.log(`main setvoteto: `, setvoteto);
-    const postid = Number(req.query.postid) || null;
+    const { postid, setvoteto } = req.session.voteData || {};
+    //   (req.session as any).voteData = null; // Clear after use
+    console.log("Session data from root /:", { postid, setvoteto });
     const posts = yield (0, fake_db_1.getPosts)(20).map((post) => {
         console.log(`object: `, Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null }));
         return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null });
@@ -58,7 +57,6 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
     }
     let newPost = (0, fake_db_1.addPost)(title, link, userId, description, subgroup);
     posts.unshift(newPost);
-    // console.log(`newPost id randomly generated: `, newPost.id);
     return res.redirect(`/posts/show/${newPost.id}`); //DONE
 }));
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -133,11 +131,9 @@ router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req,
 router.post('/vote/:postid', checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postid = Number(req.params.postid);
     const setvoteto = Number(req.body.setvoteto);
-    console.log(`postid: ${postid}, setvoteto: ${setvoteto}`);
-    if (isNaN(setvoteto) || isNaN(postid)) {
-        console.error('Invalid setvoteto or postid');
-        return res.redirect('/'); // Fallback in case of invalid data
-    }
+    console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
+    req.session.voteData = { postid, setvoteto };
+    // return res.redirect('/')  
     return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`);
 }));
 exports.default = router;

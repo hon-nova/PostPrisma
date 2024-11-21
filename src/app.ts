@@ -11,7 +11,6 @@ const app = express()
 app.set("trust proxy", 1)	
 app.set("view engine", "ejs");
 
-// console.log('path: ',path.join(__dirname, '../src/public'))
 app.use(express.static(path.join(__dirname,'../src/public')));
 app.use(session({
 	secret:"secret",
@@ -43,5 +42,5 @@ app.use('/subs', subsRoute)
 
 
 app.listen(PORT, () => {
-	console.log(`HI AGAIN, Server is running at: http://localhost:${PORT}`)
+	console.log(`HI, Server is running at: http://localhost:${PORT}`)
 });

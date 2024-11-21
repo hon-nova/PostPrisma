@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 8000;
 const app = (0, express_1.default)();
 app.set("trust proxy", 1);
 app.set("view engine", "ejs");
-// console.log('path: ',path.join(__dirname, '../src/public'))
 app.use(express_1.default.static(path_1.default.join(__dirname, '../src/public')));
 app.use((0, express_session_1.default)({
     secret: "secret",
@@ -37,5 +36,5 @@ app.use('/posts', postsRouters_1.default);
 app.use('/subs', subsRouter_1.default);
 // debug()
 app.listen(PORT, () => {
-    console.log(`HI AGAIN, Server is running at: http://localhost:${PORT}`);
+    console.log(`HI, Server is running at: http://localhost:${PORT}`);
 });

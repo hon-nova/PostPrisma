@@ -6,11 +6,9 @@ import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, get
 
 router.get("/", async (req, res) => {
 
-	console.log("Query params:", req.query);
-
-	const setvoteto = Number(req.query.setvoteto) || null
-	console.log(`main setvoteto: `,setvoteto)
-	const postid = Number(req.query.postid) || null
+	const { postid, setvoteto } = (req.session as any).voteData || {};
+//   (req.session as any).voteData = null; // Clear after use
+  console.log("Session data from root /:", { postid, setvoteto });
 
 	const posts = await getPosts(20).map((post) => {
 		console.log(`object: `,{
@@ -54,7 +52,7 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   
   if(!subgroup) errorMsg.subgroup='Please provide a subgroup.'
   if(Object.keys(errorMsg).length > 0){
-     return res.render('createPosts',{ errorMsg})
+     return res.render('createPosts',{ errorMsg })
   }
 	let posts = getPosts();
 
@@ -64,7 +62,6 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 	}
 	let newPost = addPost(title, link, userId, description, subgroup);
 	posts.unshift(newPost);
-  // console.log(`newPost id randomly generated: `, newPost.id);
 	return res.redirect(`/posts/show/${newPost.id}`); //DONE
 });
 
@@ -103,10 +100,8 @@ router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
   // ⭐ TODO    
   const postId = Number(req.params.postid)
   const postToDelete = getPost(postId)
-  res.render('deleteConfirm', { post: postToDelete})
-  
+  res.render('deleteConfirm', { post: postToDelete})  
 });
-
 
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
   // ⭐ TODO
@@ -128,19 +123,19 @@ router.post(
   ensureAuthenticated,
   async (req, res) => {
     // ⭐ TODO
-    const { description } = req.body
-    const postid = Number(req.params.postid)
-    const user = req.user
-    const creator = user?.id as number
-    // const post = getPost(postid)
-    let error=''
-    if(!description) {
-      error="Please provide the comment content."
-      return res.redirect(`/posts/show/${postid}?error=${error}`)
-    }
-     
-    addComment(postid,creator,description)
-    return res.redirect(`/posts/show/${postid}`); //DONE
+	const { description } = req.body
+	const postid = Number(req.params.postid)
+	const user = req.user
+	const creator = user?.id as number
+	// const post = getPost(postid)
+	let error=''
+	if(!description) {
+	error="Please provide the comment content."
+	return res.redirect(`/posts/show/${postid}?error=${error}`)
+	}
+	
+	addComment(postid,creator,description)
+	return res.redirect(`/posts/show/${postid}`); //DONE
   }
 );
 
@@ -161,18 +156,14 @@ router.post(
 - redirects back to `GET /posts/show/:postid`
 */
 router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
-  const  postid  = Number(req.params.postid)
-  const setvoteto  = Number(req.body.setvoteto)
- 
-  console.log(`postid: ${postid}, setvoteto: ${setvoteto}`);
+	const  postid  = Number(req.params.postid)
+	const setvoteto  = Number(req.body.setvoteto)
+	
+	console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
+	(req.session as any).voteData = { postid, setvoteto };
 
-  if (isNaN(setvoteto) || isNaN(postid)) {
-    console.error('Invalid setvoteto or postid');
-    return res.redirect('/'); // Fallback in case of invalid data
-  }
-
-  return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`)
-  
+   // return res.redirect('/')  
+	return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`);
 })
 
 export default router;
