@@ -110,11 +110,11 @@ const votes = [
 ];
 function debug() {
     console.log("==== DB DEBUGING ====");
-    // console.log("users", users);
+    console.log("users", users);
     // console.log("posts", posts);
     //   console.log("comments", comments);
     // console.log("votes", votes);
-    console.log(`getPostByCommentId(9003): `, getPostByCommentId(9003));
+    // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
     console.log("==== DB DEBUGING ====");
 }
 function getUser(id) {
@@ -187,7 +187,6 @@ function getComments() {
 }
 function deleteComment(commentid) {
     return __awaiter(this, void 0, void 0, function* () {
-        //take post.id as post_id in comments
         const commentToDelete = yield Object.values(comments).find((comment) => comment.id === commentid);
         if (commentToDelete) {
             delete comments[commentToDelete.id];

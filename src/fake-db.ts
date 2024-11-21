@@ -92,11 +92,11 @@ const votes: TVotes = [
 
 function debug() {
   console.log("==== DB DEBUGING ====");
-  // console.log("users", users);
+  console.log("users", users);
   // console.log("posts", posts);
 //   console.log("comments", comments);
   // console.log("votes", votes);
-  console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
+  // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
   console.log("==== DB DEBUGING ====");
 }
 
@@ -200,7 +200,6 @@ function getComments(){
 	return Array.from(Object.values(comments))
 }
 async function deleteComment(commentid:number){
-   //take post.id as post_id in comments
 
    const commentToDelete= await Object.values(comments).find((comment)=>comment.id === commentid)
    if(commentToDelete){

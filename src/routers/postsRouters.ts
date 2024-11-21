@@ -12,7 +12,6 @@ router.get("/", async (req, res) => {
     currentNetVotes: netVotesByPost(post.id),
     };
 	});
-  // console.log(`posts: `,posts)
   const user = await req.user;
   res.render("posts", { posts, user });
 });
@@ -22,13 +21,12 @@ router.get("/create", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/create", ensureAuthenticated, async (req, res) => {
-	// ⭐ TODO
+	
 	const { title, link, description, subgroup } = req.body;
 	console.log({ title, link, description, subgroup });
 	
 	const user = req.user;
 	const userId = user?.id as number;
-	console.log(`userId in /create: `, userId);
 
   let errorMsg: {[x:string]: string}={}
 
@@ -50,11 +48,11 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 	}
 	let newPost = addPost(title, link, userId, description, subgroup);
 	posts.unshift(newPost);
-	return res.redirect(`/posts/show/${newPost.id}`); //DONE
+	return res.redirect(`/posts/show/${newPost.id}`); 
 });
 
 router.get("/show/:postid", async (req, res) => {
-	// ⭐ TODO	
+
   const error = req.query.error || ''; 
 	const postId = Number(req.params.postid);
 	const post = getPost(postId);
@@ -69,7 +67,7 @@ router.get("/show/:postid", async (req, res) => {
 });
 
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
+  
   const postId = Number(req.params.postid)
   let post = getPost(postId)
   console.log(`post in get /edit/:postid`)
@@ -77,55 +75,47 @@ router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
+  
   const postId = Number(req.params.postid)
   
   const {title, link,description,subgroup} = req.body
   const user = req.user 
   
   editPost(postId, {title, link,description,subgroup})
-  return res.redirect(`/posts/show/${postId}`); //DONE
+  return res.redirect(`/posts/show/${postId}`); 
 });
 
 router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO    
+  
   const postId = Number(req.params.postid)
   const postToDelete = getPost(postId)
   res.render('deleteConfirm', { post: postToDelete})  
 });
 
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
-  // ⭐ TODO
+  
   const postId = Number(req.params.postid)
   const post = getPost(postId)
 
   deletePost(postId)
-  //testing
-  const posts = Promise.all(await getPosts(20).map((post)=>{
-     console.log(`all posts after delete: `,post)
-  }))
-  console.log(await posts)
 
   return res.redirect(`/subs/show/${post.subgroup}`)  
 });
 
-router.post(
-  "/comment-create/:postid",
-  ensureAuthenticated,
-  async (req, res) => {
-    // ⭐ TODO
-	const { description } = req.body
-	const postid = Number(req.params.postid)
-	const user = req.user
-	const creator = user?.id as number
-	let error=''
-	if(!description) {
-	error="Please provide the comment content."
-	return res.redirect(`/posts/show/${postid}?error=${error}`)
-	}
-	
-	addComment(postid,creator,description)
-	return res.redirect(`/posts/show/${postid}`); //DONE
+router.post("/comment-create/:postid",ensureAuthenticated,async (req, res) => {
+    
+    const { description } = req.body
+    const postid = Number(req.params.postid)
+    const user = req.user
+    const creator = user?.id as number
+    let error=''
+    if(!description) {
+    error="Please provide the comment content."
+    return res.redirect(`/posts/show/${postid}?error=${error}`)
+    }
+    
+    addComment(postid,creator,description)
+    return res.redirect(`/posts/show/${postid}`);
   }
 );
 
@@ -136,15 +126,10 @@ router.post(
     const commentid = Number(req.params.commentid);
     const post = getPostByCommentId(commentid);
     deleteComment(commentid);
-    return res.redirect(`/posts/show/${post.id}`); //DONE
+    return res.redirect(`/posts/show/${post.id}`);
   }
 );
-/* So you'll need to add at least this route:
 
-- `POST /posts/vote/:postid/`
-- uses a body field `setvoteto` to set vote to +1, -1, or 0, overriding previous vote
-- redirects back to `GET /posts/show/:postid`
-*/
 router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
 	const  postid  = Number(req.params.postid)
 	const setvoteto  = Number(req.body.setvoteto)
@@ -156,10 +141,8 @@ router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
   const currentNetVotes = sessionData.updatedNetVotes || netVotesByPost(postid);
   console.log(`currentVote: ${currentVote}, currentNetVotes: ${currentNetVotes}`);
   let updatedNetVotes = currentNetVotes;
-
   
-  if (currentVote === setvoteto) {
-    
+  if (currentVote === setvoteto) {    
     updatedNetVotes -= currentVote;
     sessionData.setvoteto = 0; 
   } else {
@@ -175,7 +158,7 @@ router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
 
   console.log('Updated session data:', (req.session as any).voteData);
   
-	return res.redirect(`/posts/show/${postid}?setvoteto=${setvoteto}&updatedNetVotes=${updatedNetVotes}`); //DONE
+	return res.redirect(`/posts/show/${postid}?setvoteto=${setvoteto}&updatedNetVotes=${updatedNetVotes}`);
 })
 
 export default router;
