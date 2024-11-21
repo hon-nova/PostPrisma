@@ -29,34 +29,15 @@
 
         <div class="individualPost">
           <h3 style="margin:0;"><%= post.creator?.uname %></h3>
-          <% if (user) { %>
-            <div style="display:flex;justify-content: space-between;">
-              <a href="/posts/show/<%=post.id%>" style="margin:0;"><%= post.title %></a>
-              <span style="display:flex;justify-content: space-between;">
-						<form action="/posts/vote/<%= post.id %>" method="POST">
-							<input type="hidden" name="setvoteto" value="-1" />
-							<button type="submit" style="all:unset;"> <i class="bi bi-hand-thumbs-down <%= post.setvoteto === -1 ? 'downVote': 'neutral' %>"></i></button>
-						</form>
-						<form action="/posts/vote/<%= post.id %>" method="POST">
-							<input type="hidden" name="setvoteto" value="+1" />
-							<button type="submit" style="all:unset;"> <i class="bi bi-hand-thumbs-up <%= post.setvoteto === 1 ? 'upVote': 'neutral' %>"></i></button>
-						</form> 
-						<div style="display:flex;text-align:center;align-items:center;margin-top:10px;">							
-							<p><%= post.currentNetVotes %></p>
-						</div> 
-              </span>
-            </div>
-          <% } %>  
+          <a href="/posts/show/<%=post.id%>" style="margin:0;"><%= post.title %></a>
           <p><%= post.description %></p>
 			 <hr />
         </div>
-        <% }) %>
-		
+        <% }) %>		
       </div>
       <div>
         <a href="/subs/list">Subgroups</a>
       </div>
-
       <div>
         <% if (user) { %>
         <a role="button" href="/posts/create">Create Post</a>

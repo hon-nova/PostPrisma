@@ -201,7 +201,6 @@ const netVotesByPost = (postId) => {
 };
 exports.netVotesByPost = netVotesByPost;
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    // } getVotesForPost(101);
     // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
     // console.log(`getVotesForPost(101): `,getVotesForPost(101))
     // console.log(`getVotesForPost(102): `,getVotesForPost(102))
