@@ -115,7 +115,7 @@ router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
      console.log(`all posts after delete: `,post)
   }))
   console.log(await posts)
-  
+
   return res.redirect(`/subs/show/${post.subgroup}`)  
 });
 
@@ -150,5 +150,14 @@ router.post(
     return res.redirect(`/posts/show/${post.id}`); //DONE
   }
 );
+/* So you'll need to add at least this route:
+
+- `POST /posts/vote/:postid/`
+- uses a body field `setvoteto` to set vote to +1, -1, or 0, overriding previous vote
+- redirects back to `GET /posts/show/:postid`
+*/
+router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
+  const { postid } = req.params
+})
 
 export default router;

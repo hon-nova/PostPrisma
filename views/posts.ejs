@@ -8,6 +8,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link href="/css/style.css" rel="stylesheet" />
     <title>Homepage</title>
   </head>
@@ -28,10 +29,33 @@
 
         <div class="individualPost">
           <h3 style="margin:0;"><%= post.creator?.uname %></h3>
-          <a href="/posts/show/<%=post.id%>"><%= post.title %></a>
+          <% if (user) { %>
+            <div style="display:flex;justify-content: space-between;">
+              <a href="/posts/show/<%=post.id%>" style="margin:0;"><%= post.title %></a>
+              <span style="display:flex;justify-content: space-between;">
+						<form action="/posts/vote/<%= post.id %>" method="POST">
+							<input type="hidden" name="setvoteto" value="+1" />
+							<button type="submit" style="background-color:transparent;border:none;width:20px;height:20px;"> <i class="bi bi-hand-thumbs-down"></i></button>
+						</form>
+						<form action="/posts/vote/<%= post.id %>" method="POST">
+							<input type="hidden" name="setvoteto" value="-1" />
+							<button type="submit" style="background-color:transparent;border:none;;width:20px;height:20px;margin-right:10px;">
+								<i class="bi bi-hand-thumbs-up"></i>
+							</button>
+						</form> 
+						<div style="display:flex;text-align:center;align-items:center;">
+							<p>NetVotes:<%= %> </p>
+						</div>               
+                 
+              </span>
+            </div>
+          <% } %>          
+         
           <p><%= post.description %></p>
+			 <hr />
         </div>
         <% }) %>
+		
       </div>
       <div>
         <a href="/subs/list">Subgroups</a>
