@@ -1,10 +1,1 @@
-button i.bi.bi-hand-thumbs-up.upVote {
-	color: #FFDE21 !important;
-}
-button i.bi.bi-hand-thumbs-down.downVote {
-	color:red !important;
-}
-button i.bi.bi-hand-thumbs-down.neutral,
-button i.bi.bi-hand-thumbs-up.neutral {
-  color: transparent !important;
-}
+

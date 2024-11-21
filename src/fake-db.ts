@@ -216,7 +216,7 @@ const netVotesByPost = (postId:number): number=>{
 }
   
 (async () => {  
-  // } getVotesForPost(101);
+  
 	// console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
   // console.log(`getVotesForPost(101): `,getVotesForPost(101))
   // console.log(`getVotesForPost(102): `,getVotesForPost(102))

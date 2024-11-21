@@ -5,24 +5,12 @@ import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, get
 
 
 router.get("/", async (req, res) => {
-
-	const { postid, setvoteto } = (req.session as any).voteData || {};
-//   (req.session as any).voteData = null; // Clear after use
-  console.log("Session data from root /:", { postid, setvoteto });
-
 	const posts = await getPosts(20).map((post) => {
-		console.log(`object: `,{
-			...post,
-			creator: getUser(post.creator),
-			currentNetVotes: netVotesByPost(post.id),
-			setvoteto: post.id === postid ? setvoteto : null,
-		})
-			return {
-			...post,
-			creator: getUser(post.creator),
-			currentNetVotes: netVotesByPost(post.id),
-			setvoteto: post.id === postid ? setvoteto : null,
-			};
+    return {
+    ...post,
+    creator: getUser(post.creator),
+    currentNetVotes: netVotesByPost(post.id),
+    };
 	});
   // console.log(`posts: `,posts)
   const user = await req.user;
@@ -67,12 +55,17 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
 
 router.get("/show/:postid", async (req, res) => {
 	// ⭐ TODO	
+  const error = req.query.error || ''; 
 	const postId = Number(req.params.postid);
 	const post = getPost(postId);
-  
-  const error = req.query.error || ''; 
-	// console.log(`post in individual post: `, post);
-	res.render("individualPost", { post, user: req.user,error }); //DONE
+  // vote
+  const netVotes = netVotesByPost(postId);
+  const sessionData = (req.session as any).voteData || {};
+  const setvoteto = sessionData.setvoteto || 0;
+  const updatedNetVotes = sessionData.updatedNetVotes || netVotesByPost(postId);
+
+  console.log("Session data from root /:", { setvoteto, updatedNetVotes });
+	res.render("individualPost", { post, user: req.user,error, setvoteto,netVotes,updatedNetVotes }); 
 });
 
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
@@ -91,8 +84,6 @@ router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
   const user = req.user 
   
   editPost(postId, {title, link,description,subgroup})
-  // const updatedPost = getPost(postId)   
-  
   return res.redirect(`/posts/show/${postId}`); //DONE
 });
 
@@ -127,7 +118,6 @@ router.post(
 	const postid = Number(req.params.postid)
 	const user = req.user
 	const creator = user?.id as number
-	// const post = getPost(postid)
 	let error=''
 	if(!description) {
 	error="Please provide the comment content."
@@ -160,10 +150,32 @@ router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
 	const setvoteto  = Number(req.body.setvoteto)
 	
 	console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
-	(req.session as any).voteData = { postid, setvoteto };
+	
+  const sessionData = (req.session as any).voteData || {};
+  const currentVote = sessionData.setvoteto || 0; 
+  const currentNetVotes = sessionData.updatedNetVotes || netVotesByPost(postid);
+  console.log(`currentVote: ${currentVote}, currentNetVotes: ${currentNetVotes}`);
+  let updatedNetVotes = currentNetVotes;
 
-   // return res.redirect('/')  
-	return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`);
+  
+  if (currentVote === setvoteto) {
+    
+    updatedNetVotes -= currentVote;
+    sessionData.setvoteto = 0; 
+  } else {
+    
+    updatedNetVotes += setvoteto - currentVote;
+    sessionData.setvoteto = setvoteto;
+  }
+
+  sessionData.updatedNetVotes = updatedNetVotes;
+
+  // save to session
+  (req.session as any).voteData = sessionData;
+
+  console.log('Updated session data:', (req.session as any).voteData);
+  
+	return res.redirect(`/posts/show/${postid}?setvoteto=${setvoteto}&updatedNetVotes=${updatedNetVotes}`); //DONE
 })
 
 export default router;

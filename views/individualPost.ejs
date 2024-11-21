@@ -33,6 +33,23 @@
 					<li class="move-right"><a href="/posts/deleteconfirm/<%= post.id %>"><i class="bi bi-trash3-fill" style="margin-right: 5px; color:red;"></i>Del Post</a></li>
 				</span>
 				<% } %>
+				
+				<!-- vote -->
+				<% if (user) { %>
+					<div style="display:flex;justify-content: start">
+						<form action="/posts/vote/<%= post.id %>" method="POST" style="margin-right:10px;">
+							<input type="hidden" name="setvoteto" value="-1" />
+							<button type="submit" style="all:unset;"><i class="bi bi-hand-thumbs-down <%=setvoteto ===-1 ? 'downVote':'neutral' %>"></i></button>
+						</form>
+						<form action="/posts/vote/<%= post.id %>" method="POST" style="margin-right:10px;">
+							<input type="hidden" name="setvoteto" value="+1" />
+							<button type="submit" style="all:unset;"><i class="bi bi-hand-thumbs-up <%=setvoteto ===1 ? 'upVote':'neutral' %>"></i></button>
+						</form> 
+						<div style="display:flex;text-align:center;align-items:center;margin-right:10px;">						
+							<p><%= updatedNetVotes !== undefined ? updatedNetVotes : netVotes %></p>
+						</div> 					 
+					</div>
+				 <% } %>  	
 				<li><a href="<%= post.link %>" target="_blank"><i class="bi bi-link-45deg"></i> Link</a></li>
 				<li><%= post.timestamp %></li>
 				<li>Poster: <span><%= post.creator?.uname %></span></li>
@@ -55,7 +72,8 @@
 					<p>No Comments Available Yet</p>
 				<% } %>
 				</div>
-			</ul>			
+			</ul>
+				
 		</div>
 		<!-- comment -->
 		 <% if(user) { %>			

@@ -17,12 +17,8 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const fake_db_1 = require("../fake-db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { postid, setvoteto } = req.session.voteData || {};
-    //   (req.session as any).voteData = null; // Clear after use
-    console.log("Session data from root /:", { postid, setvoteto });
     const posts = yield (0, fake_db_1.getPosts)(20).map((post) => {
-        console.log(`object: `, Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null }));
-        return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id), setvoteto: post.id === postid ? setvoteto : null });
+        return Object.assign(Object.assign({}, post), { creator: (0, fake_db_1.getUser)(post.creator), currentNetVotes: (0, fake_db_1.netVotesByPost)(post.id) });
     });
     // console.log(`posts: `,posts)
     const user = yield req.user;
@@ -61,11 +57,16 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
 }));
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO	
+    const error = req.query.error || '';
     const postId = Number(req.params.postid);
     const post = (0, fake_db_1.getPost)(postId);
-    const error = req.query.error || '';
-    // console.log(`post in individual post: `, post);
-    res.render("individualPost", { post, user: req.user, error }); //DONE
+    // vote
+    const netVotes = (0, fake_db_1.netVotesByPost)(postId);
+    const sessionData = req.session.voteData || {};
+    const setvoteto = sessionData.setvoteto || 0;
+    const updatedNetVotes = sessionData.updatedNetVotes || (0, fake_db_1.netVotesByPost)(postId);
+    console.log("Session data from root /:", { setvoteto, updatedNetVotes });
+    res.render("individualPost", { post, user: req.user, error, setvoteto, netVotes, updatedNetVotes });
 }));
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ⭐ TODO
@@ -80,7 +81,6 @@ router.post("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __aw
     const { title, link, description, subgroup } = req.body;
     const user = req.user;
     (0, fake_db_1.editPost)(postId, { title, link, description, subgroup });
-    // const updatedPost = getPost(postId)   
     return res.redirect(`/posts/show/${postId}`); //DONE
 }));
 router.get("/deleteconfirm/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -107,7 +107,6 @@ router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, re
     const postid = Number(req.params.postid);
     const user = req.user;
     const creator = user === null || user === void 0 ? void 0 : user.id;
-    // const post = getPost(postid)
     let error = '';
     if (!description) {
         error = "Please provide the comment content.";
@@ -132,8 +131,23 @@ router.post('/vote/:postid', checkAuth_1.ensureAuthenticated, (req, res) => __aw
     const postid = Number(req.params.postid);
     const setvoteto = Number(req.body.setvoteto);
     console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
-    req.session.voteData = { postid, setvoteto };
-    // return res.redirect('/')  
-    return res.redirect(`/?setvoteto=${setvoteto}&postid=${postid}`);
+    const sessionData = req.session.voteData || {};
+    const currentVote = sessionData.setvoteto || 0;
+    const currentNetVotes = sessionData.updatedNetVotes || (0, fake_db_1.netVotesByPost)(postid);
+    console.log(`currentVote: ${currentVote}, currentNetVotes: ${currentNetVotes}`);
+    let updatedNetVotes = currentNetVotes;
+    if (currentVote === setvoteto) {
+        updatedNetVotes -= currentVote;
+        sessionData.setvoteto = 0;
+    }
+    else {
+        updatedNetVotes += setvoteto - currentVote;
+        sessionData.setvoteto = setvoteto;
+    }
+    sessionData.updatedNetVotes = updatedNetVotes;
+    // save to session
+    req.session.voteData = sessionData;
+    console.log('Updated session data:', req.session.voteData);
+    return res.redirect(`/posts/show/${postid}?setvoteto=${setvoteto}&updatedNetVotes=${updatedNetVotes}`); //DONE
 }));
 exports.default = router;
