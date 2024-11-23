@@ -159,17 +159,8 @@ async function getSubs() {
   return posts.map((post) => post.subgroup);
 }
 
-<<<<<<< HEAD
-async function getComments(){
-	return prisma.comment.findMany()
-=======
 async function getComments():Promise<TComment[]>{
 	return prisma.comment.findMany()
-
-async function getComments(){
-	return await prisma.comment.findMany()
-
->>>>>>> 7ac3f5a6421d5c9a4d32d4999478ccef2705c677
 }
 async function deleteComment(commentid:number){
   await prisma.comment.delete({
@@ -199,14 +190,7 @@ async function addComment(post_id: number, creator: number, description: string)
   return comment;
 }
 (async()=>{
-  // console.log(`posts: `,await getPosts())
-  // console.log(`users: `, await getUsers())
-  // console.log(`comments: `, await getComments())
-  // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
-  // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
-  // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
-  console.log(`netVotesByPost(1): `, await netVotesByPost(1))
-  console.log(`netVotesByPost(3): `, await netVotesByPost(3))
+  
 })()
 
 export {
