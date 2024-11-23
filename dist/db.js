@@ -89,6 +89,20 @@ function decoratePost(post) {
             .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); })));
         const newPost = Object.assign(Object.assign({}, post), { creator: yield getUser(post.id), votes: yield getVotesForPost(post.id), comments: yield Promise.all(commentss
                 .filter((comment) => comment.post_id === post.id)
+                .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); }))), function: getVotes(), []:  > {
+                return: yield prisma.vote.findMany()
+            }, function: getVotesForPost(post_id, number) }), { const: votes = yield getVotes(), return: votes, filter };
+        ((vote) => vote.post_id === post_id);
+    });
+}
+function decoratePost(post) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const comments = yield getComments();
+        const votes = yield getVotes();
+        const newPost = Object.assign(Object.assign({}, post), { creator: yield getUser(post.id), votes: yield Promise.all(votes
+                .filter((vote) => vote.post_id === post.id)
+                .map((vote) => __awaiter(this, void 0, void 0, function* () { return ({ user: yield getUser(vote.user_id), value: vote.value }); }))), comments: yield Promise.all(comments
+                .filter((comment) => comment.post_id === post.id)
                 .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); }))) });
         console.log(`newPost in decoratePost: `, newPost);
         return newPost;
@@ -214,4 +228,6 @@ function addComment(post_id, creator, description) {
     // console.log(`users: `, await getUsers())
     // console.log(`comments: `, await getComments())
     // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
+    // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
+    // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
 }))();
