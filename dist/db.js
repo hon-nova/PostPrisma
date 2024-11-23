@@ -36,7 +36,7 @@ function getPostByCommentId(commentId) {
             }
         });
         //step 2: retrieve post_id = comment.post_id
-        const postId = yield comment.post_id;
+        const postId = comment === null || comment === void 0 ? void 0 : comment.post_id;
         //step 3: retrieve post by post_id
         return yield getPost(postId);
     });
@@ -121,6 +121,8 @@ function getPost(id) {
                 id: id
             }
         });
+        // console.log(`post in getPost: `, await post)
+        console.log(`decoratePost in getPost:`, yield decoratePost(post));
         return yield decoratePost(post);
     });
 }
@@ -179,7 +181,7 @@ function getComments() {
 }
 function deleteComment(commentid) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield prisma.post.delete({
+        yield prisma.comment.delete({
             where: {
                 id: commentid,
             },

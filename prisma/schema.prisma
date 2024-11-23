@@ -49,5 +49,9 @@ model Vote {
   post Post @relation(fields: [post_id], references: [id])
   user User @relation(fields: [user_id], references: [id])
 
+<<<<<<< HEAD
   @@id([user_id, post_id])
+=======
+  @@id([post_id, user_id])
+>>>>>>> 02-posts
 }

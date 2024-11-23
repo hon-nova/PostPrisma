@@ -62,10 +62,10 @@ router.get("/show/:postid", async (req, res) => {
 	const post = await getPost(postId);
   console.log(`post in get /show/:postid`, post)
   // vote
-  const netVotes = netVotesByPost(postId);
+  const netVotes = await netVotesByPost(postId);
   const sessionData = (req.session as any).voteData || {};
   const setvoteto = sessionData.setvoteto || 0;
-  const updatedNetVotes = sessionData.updatedNetVotes || netVotesByPost(postId);
+  const updatedNetVotes = sessionData.updatedNetVotes || await netVotesByPost(postId);
 
   // console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
 	res.render("individualPost", { post, user: req.user,error, setvoteto,netVotes,updatedNetVotes }); 
@@ -130,7 +130,7 @@ router.post(
   async (req, res) => {
     const commentid = Number(req.params.commentid);
     const post = await getPostByCommentId(commentid);
-    deleteComment(commentid);    
+    await deleteComment(commentid);    
     return res.redirect(`/posts/show/${post?.id}`);
   }
 );
