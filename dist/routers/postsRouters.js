@@ -17,9 +17,9 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const db_1 = require("../db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield (0, db_1.getPosts)(2);
+    const posts = yield (0, db_1.getPosts)(20);
     posts.map((post) => {
-        return Object.assign(Object.assign({}, post), { creator: (0, db_1.getUser)(post.creator), currentNetVotes: (0, db_1.netVotesByPost)(post.id) });
+        return Object.assign(Object.assign({}, post), { creator: (0, db_1.getUser)(post.creator) });
     });
     console.log(`all post in get /:`, posts);
     const user = yield req.user;

@@ -6,12 +6,11 @@ import { TPost } from "../types";
 
 
 router.get("/", async (req, res) => {
-  const posts = await getPosts(2)
+  const posts = await getPosts(20)
 	posts.map((post) => {
     return {
     ...post,
-    creator: getUser(post.creator),
-    currentNetVotes: netVotesByPost(post.id),
+    creator: getUser(post.creator),    
     };
 	});
   console.log(`all post in get /:`, posts);
