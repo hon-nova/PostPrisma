@@ -121,8 +121,9 @@ function getPost(id) {
                 id: id
             }
         });
-        // console.log(`post in getPost: `, await post)
-        console.log(`decoratePost in getPost:`, yield decoratePost(post));
+        if (!post) {
+            throw new Error(`Post with ID ${id} not found`);
+        }
         return yield decoratePost(post);
     });
 }
@@ -176,7 +177,7 @@ function getSubs() {
 }
 function getComments() {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield prisma.comment.findMany();
+        return prisma.comment.findMany();
     });
 }
 function deleteComment(commentid) {
@@ -216,4 +217,6 @@ function addComment(post_id, creator, description) {
     // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
     // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
     // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
+    console.log(`netVotesByPost(1): `, yield netVotesByPost(1));
+    console.log(`netVotesByPost(3): `, yield netVotesByPost(3));
 }))();
