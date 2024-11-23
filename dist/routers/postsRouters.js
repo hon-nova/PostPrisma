@@ -59,12 +59,13 @@ router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, func
     const error = req.query.error || '';
     const postId = Number(req.params.postid);
     const post = yield (0, db_1.getPost)(postId);
+    console.log(`post in get /show/:postid`, post);
     // vote
     const netVotes = (0, db_1.netVotesByPost)(postId);
     const sessionData = req.session.voteData || {};
     const setvoteto = sessionData.setvoteto || 0;
     const updatedNetVotes = sessionData.updatedNetVotes || (0, db_1.netVotesByPost)(postId);
-    console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
+    // console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
     res.render("individualPost", { post, user: req.user, error, setvoteto, netVotes, updatedNetVotes });
 }));
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

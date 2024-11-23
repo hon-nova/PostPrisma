@@ -32,4 +32,4 @@ export type TUser = {
 	password: string
 }
 
-export type TVotes = { user_id: number; post_id: number; value: number }[];
+export type TVote = { user_id: number; post_id: number; value: number };

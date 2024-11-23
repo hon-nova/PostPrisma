@@ -1,9 +1,9 @@
-import { TComment , TPost, TPosts, TVotes, TUser } from "./types";
+import { TComment , TPost, TPosts, TVote, TUser } from "./types";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 
-async function getPostByCommentId(commentId:number):Promise<TPost>{
+async function getPostByCommentId(commentId:number){
   //step 1: get the comment
   const comment = await prisma.comment.findUnique({
     where: {
@@ -17,12 +17,9 @@ async function getPostByCommentId(commentId:number):Promise<TPost>{
   
 }
 
-const votes: TVotes = [
-  { user_id: 2, post_id: 101, value: +1 },
-  { user_id: 3, post_id: 101, value: +1 },
-  { user_id: 4, post_id: 101, value: +1 },
-  { user_id: 3, post_id: 102, value: -1 },
-];
+async function getVotes():Promise<TVote[]> {
+  return await prisma.vote.findMany()
+}
 
 function debug() {
   console.log("==== DB DEBUGING ====");
@@ -51,20 +48,27 @@ async function getUserByUsername(uname: string):Promise<TUser> {
   return user
 }
 
-function getVotesForPost(post_id: number) {
-  return votes.filter((vote) => vote.post_id === post_id) || undefined;
+async function getVotesForPost(post_id: number) {
+  const votess = await getVotes();
+  return await Promise.all(votess.filter((vote:TVote) => vote.post_id === post_id) || undefined);
 }
 
 async function decoratePost(post: TPost) {
-  const comments = await getComments();
+  const commentss = await getComments();
+  const comments = await Promise.all(commentss
+    .filter((comment:TComment) => comment.post_id === post.id)
+    .map(async(comment:TComment) => ({ ...comment, creator: await getUser(comment.creator) }))
+  )     
   const newPost = {
     ...post,
     creator: await getUser(post.id),
-    votes: getVotesForPost(post.id),
-    comments: comments
+    votes: await getVotesForPost(post.id),
+    comments: await Promise.all(commentss
       .filter((comment:TComment) => comment.post_id === post.id)
-      .map((comment:TComment) => ({ ...comment, creator: getUser(comment.creator) })),
+      .map(async(comment:TComment) => ({ ...comment, creator: await getUser(comment.creator) }))
+    )     
   };
+  console.log(`newPost in decoratePost: `,newPost)
   return newPost;
 }
 
@@ -80,14 +84,13 @@ async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPos
     }
   allPosts.sort((a:TPost, b:TPost) => (b.timestamp > a.timestamp ? 1: -1));
   return allPosts.slice(0, n);
-
 }
 async function getUsers():Promise<TUser[]>{
   return await prisma.user.findMany()
 }
 
-async function getPost(id: number):Promise<TPost> {
-  const post = await prisma.post.findUnique({
+async function getPost(id: number){
+  const post:TPost = await prisma.post.findUnique({
     where: {
       id: id
     }
@@ -154,7 +157,7 @@ async function getSubs() {
 }
 
 async function getComments(){
-	return prisma.comment.findMany()
+	return await prisma.comment.findMany()
 }
 async function deleteComment(commentid:number){
   await prisma.post.delete({
@@ -164,8 +167,8 @@ async function deleteComment(commentid:number){
   });
 }
 
-const netVotesByPost = (postId:number): number=>{
-  let votes = getVotesForPost(postId)
+async function netVotesByPost(postId:number): Promise<number>{
+  let votes = await getVotesForPost(postId)
   let netVotes = votes.reduce((acc,{value})=> acc + value,0)
   
   return netVotes
@@ -187,7 +190,7 @@ async function addComment(post_id: number, creator: number, description: string)
   // console.log(`posts: `,await getPosts())
   // console.log(`users: `, await getUsers())
   // console.log(`comments: `, await getComments())
-  console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
+  // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
 })()
 
 export {
