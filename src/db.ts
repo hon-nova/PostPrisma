@@ -42,7 +42,7 @@ async function getUserByUsername(uname: string):Promise<TUser|null> {
     },
   })
   return user
-}
+}     
 
 async function getVotes():Promise<TVote[]>{
   return await prisma.vote.findMany()
@@ -65,7 +65,9 @@ async function decoratePost(post: TPost) {
     comments: await Promise.all(comments     
       .filter((comment:TComment) => comment.post_id === post.id)
       .map(async (comment:TComment) => ({ ...comment, creator: await getUser(comment.creator) })))  
+
   };
+  console.log(`newPost in decoratePost: `,newPost)
   return newPost;
 }
 
@@ -81,7 +83,6 @@ async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPos
     }
   allPosts.sort((a:TPost, b:TPost) => (b.timestamp > a.timestamp ? 1: -1));
   return allPosts.slice(0, n);
-
 }
 async function getUsers():Promise<TUser[]>{
   return await prisma.user.findMany()
@@ -160,6 +161,10 @@ async function getSubs() {
 
 async function getComments():Promise<TComment[]>{
 	return prisma.comment.findMany()
+
+async function getComments(){
+	return await prisma.comment.findMany()
+
 }
 async function deleteComment(commentid:number){
   await prisma.comment.delete({

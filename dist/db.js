@@ -90,6 +90,7 @@ function decoratePost(post) {
                 .map((vote) => __awaiter(this, void 0, void 0, function* () { return ({ user: yield getUser(vote.user_id), value: vote.value }); }))), comments: yield Promise.all(comments
                 .filter((comment) => comment.post_id === post.id)
                 .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); }))) });
+        console.log(`newPost in decoratePost: `, newPost);
         return newPost;
     });
 }
@@ -176,7 +177,7 @@ function getSubs() {
 }
 function getComments() {
     return __awaiter(this, void 0, void 0, function* () {
-        return prisma.comment.findMany();
+        return yield prisma.comment.findMany();
     });
 }
 function deleteComment(commentid) {

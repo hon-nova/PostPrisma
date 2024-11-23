@@ -60,13 +60,14 @@ router.get("/show/:postid", async (req, res) => {
   const error = req.query.error || ''; 
 	const postId = Number(req.params.postid);
 	const post = await getPost(postId);
+  console.log(`post in get /show/:postid`, post)
   // vote
   const netVotes = await netVotesByPost(postId);
   const sessionData = (req.session as any).voteData || {};
   const setvoteto = sessionData.setvoteto || 0;
   const updatedNetVotes = sessionData.updatedNetVotes || await netVotesByPost(postId);
 
-  console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
+  // console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
 	res.render("individualPost", { post, user: req.user,error, setvoteto,netVotes,updatedNetVotes }); 
 });
 
