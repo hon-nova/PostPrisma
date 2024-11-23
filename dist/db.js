@@ -115,8 +115,8 @@ const votes = [
 ];
 function debug() {
     console.log("==== DB DEBUGING ====");
-    console.log("users", users);
-    console.log("posts", posts);
+    // console.log("users", users);
+    // console.log("posts", posts);
     // console.log("comments", comments);
     // console.log("votes", votes);
     // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
@@ -159,34 +159,25 @@ function getUsers() {
 }
 (() => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`posts: `, yield getPosts());
-    console.log(`users: `, yield getUsers());
+    // console.log(`users: `, await getUsers())
 }))();
 function getPost(id) {
     return decoratePost(posts[id]);
 }
 function addPost(title, link, creator, description, subgroup) {
-    let id = Math.max(...Object.keys(posts).map(Number)) + 1;
-    let post = {
-        id,
-        title,
-        link,
-        description,
-        creator: Number(creator),
-        subgroup,
-        timestamp: Date.now(),
-    };
-    // posts[id] = post;
-    prisma.post.create({
-        data: {
-            title,
-            link,
-            description,
-            creator: Number(creator),
-            subgroup,
-            timestamp: BigInt(Date.now()),
-        },
+    return __awaiter(this, void 0, void 0, function* () {
+        const post = yield prisma.post.create({
+            data: {
+                title,
+                link,
+                description,
+                creator: Number(creator),
+                subgroup,
+                timestamp: Date.now(),
+            },
+        });
+        return post;
     });
-    return post;
 }
 function editPost(post_id, changes = {}) {
     let post = posts[post_id];
@@ -227,11 +218,6 @@ const netVotesByPost = (postId) => {
 };
 exports.netVotesByPost = netVotesByPost;
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
-    // console.log(`getVotesForPost(101): `,getVotesForPost(101))
-    // console.log(`getVotesForPost(102): `,getVotesForPost(102))
-    // console.log(`netVotesByPost(101): `,netVotesByPost(101))
-    // console.log(`netVotesByPost(102): `,netVotesByPost(102))
 }))();
 function addComment(post_id, creator, description) {
     let id = Math.max(...Object.keys(comments).map(Number)) + 1;

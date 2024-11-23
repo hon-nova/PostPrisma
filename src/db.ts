@@ -94,8 +94,8 @@ const votes: TVotes = [
 
 function debug() {
   console.log("==== DB DEBUGING ====");
-  console.log("users", users);
-  console.log("posts", posts);
+  // console.log("users", users);
+  // console.log("posts", posts);
   // console.log("comments", comments);
   // console.log("votes", votes);
   // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
@@ -148,39 +148,28 @@ async function getUsers():Promise<TUsers[]>{
 }
 (async()=>{
   console.log(`posts: `,await getPosts())
-  console.log(`users: `, await getUsers())
+  // console.log(`users: `, await getUsers())
 })()
 
 function getPost(id: number) {
   return decoratePost(posts[id]);
 }
 
-function addPost(
+async function addPost(
   title: string,
   link: string,
   creator: number,
   description: string,
   subgroup: string
-) {
-  let id = Math.max(...Object.keys(posts).map(Number)) + 1;
-  let post = {
-    id,
-    title,
-    link,
-    description,
-    creator: Number(creator),
-    subgroup,
-    timestamp: Date.now(),
-  };
-  // posts[id] = post;
-  prisma.post.create({
+) {  
+  const post = await prisma.post.create({
     data: {      
       title,      
       link,
       description,
       creator: Number(creator),
       subgroup,
-      timestamp: BigInt(Date.now()),
+      timestamp: Date.now(),      
     },
   });
   return post;
@@ -238,11 +227,7 @@ const netVotesByPost = (postId:number): number=>{
   
 (async () => {  
   
-	// console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
-  // console.log(`getVotesForPost(101): `,getVotesForPost(101))
-  // console.log(`getVotesForPost(102): `,getVotesForPost(102))
-  // console.log(`netVotesByPost(101): `,netVotesByPost(101))
-  // console.log(`netVotesByPost(102): `,netVotesByPost(102))
+
 })();
 
 function addComment(post_id: number, creator: number, description: string) {
