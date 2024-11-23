@@ -41,11 +41,6 @@ function getPostByCommentId(commentId) {
         return yield getPost(postId);
     });
 }
-function getVotes() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield prisma.vote.findMany();
-    });
-}
 function debug() {
     console.log("==== DB DEBUGING ====");
     // console.log("users", users);
@@ -75,24 +70,15 @@ function getUserByUsername(uname) {
         return user;
     });
 }
-function getVotesForPost(post_id) {
+function getVotes() {
     return __awaiter(this, void 0, void 0, function* () {
-        const votess = yield getVotes();
-        return yield Promise.all(votess.filter((vote) => vote.post_id === post_id) || undefined);
+        return yield prisma.vote.findMany();
     });
 }
-function decoratePost(post) {
+function getVotesForPost(post_id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const commentss = yield getComments();
-        const comments = yield Promise.all(commentss
-            .filter((comment) => comment.post_id === post.id)
-            .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); })));
-        const newPost = Object.assign(Object.assign({}, post), { creator: yield getUser(post.id), votes: yield getVotesForPost(post.id), comments: yield Promise.all(commentss
-                .filter((comment) => comment.post_id === post.id)
-                .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); }))), function: getVotes(), []:  > {
-                return: yield prisma.vote.findMany()
-            }, function: getVotesForPost(post_id, number) }), { const: votes = yield getVotes(), return: votes, filter };
-        ((vote) => vote.post_id === post_id);
+        const votes = yield getVotes();
+        return votes.filter((vote) => vote.post_id === post_id);
     });
 }
 function decoratePost(post) {
