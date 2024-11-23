@@ -42,11 +42,13 @@ async function getUser(id: number) {
   })
   return user
 }
-async function getUserByUsername(uname: string) {
-  const users = await getUsers()
-  return await getUser(
-    users.filter((user) => user.uname === uname)[0].id
-  );
+async function getUserByUsername(uname: string):Promise<TUser> {
+  const user = await prisma.user.findUnique({
+    where: {
+      uname: uname,
+    },
+  })
+  return user
 }
 
 function getVotesForPost(post_id: number) {
@@ -70,8 +72,7 @@ async function decoratePost(post: TPost) {
  * @param {*} n how many posts to get, defaults to 5
  * @param {*} sub which sub to fetch, defaults to all subs
  */
-async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPost[]> {
-  
+async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPost[]> {  
   let allPosts = await prisma.post.findMany()
   //  set more condition with filter if you will: const posts_filter = await pr  
   if (sub) {
@@ -85,9 +86,13 @@ async function getUsers():Promise<TUser[]>{
   return await prisma.user.findMany()
 }
 
-
 async function getPost(id: number):Promise<TPost> {
-  return decoratePost(await getPost(id));
+  const post = await prisma.post.findUnique({
+    where: {
+      id: id
+    }
+  })
+  return await decoratePost(post);
 }
 
 async function addPost(
@@ -165,11 +170,6 @@ const netVotesByPost = (postId:number): number=>{
   
   return netVotes
 }
-  
-(async () => {  
-  
-
-})();
 
 async function addComment(post_id: number, creator: number, description: string): Promise<TComment> {  
   // comments[id] = comment;
@@ -187,6 +187,7 @@ async function addComment(post_id: number, creator: number, description: string)
   // console.log(`posts: `,await getPosts())
   // console.log(`users: `, await getUsers())
   // console.log(`comments: `, await getComments())
+  console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
 })()
 
 export {

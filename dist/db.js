@@ -68,8 +68,12 @@ function getUser(id) {
 }
 function getUserByUsername(uname) {
     return __awaiter(this, void 0, void 0, function* () {
-        const users = yield getUsers();
-        return yield getUser(users.filter((user) => user.uname === uname)[0].id);
+        const user = yield prisma.user.findUnique({
+            where: {
+                uname: uname,
+            },
+        });
+        return user;
     });
 }
 function getVotesForPost(post_id) {
@@ -106,7 +110,12 @@ function getUsers() {
 }
 function getPost(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return decoratePost(yield getPost(id));
+        const post = yield prisma.post.findUnique({
+            where: {
+                id: id
+            }
+        });
+        return yield decoratePost(post);
     });
 }
 function addPost(title, link, creator, description, subgroup) {
@@ -177,8 +186,6 @@ const netVotesByPost = (postId) => {
     return netVotes;
 };
 exports.netVotesByPost = netVotesByPost;
-(() => __awaiter(void 0, void 0, void 0, function* () {
-}))();
 function addComment(post_id, creator, description) {
     return __awaiter(this, void 0, void 0, function* () {
         // comments[id] = comment;
@@ -197,4 +204,5 @@ function addComment(post_id, creator, description) {
     // console.log(`posts: `,await getPosts())
     // console.log(`users: `, await getUsers())
     // console.log(`comments: `, await getComments())
+    console.log('getUserByUsername("alice"):', yield getUserByUsername("alice"));
 }))();

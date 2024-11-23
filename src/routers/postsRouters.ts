@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     return postObject    
 	})
   );
-  console.log(`posts in root /: `, posts)
+  // console.log(`posts in root /: `, posts)
   const user = await req.user;
   res.render("posts", { posts, user });
 });
@@ -66,7 +66,7 @@ router.get("/show/:postid", async (req, res) => {
   const setvoteto = sessionData.setvoteto || 0;
   const updatedNetVotes = sessionData.updatedNetVotes || netVotesByPost(postId);
 
-  console.log("Session data from root /:", { setvoteto, updatedNetVotes });
+  console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
 	res.render("individualPost", { post, user: req.user,error, setvoteto,netVotes,updatedNetVotes }); 
 });
 

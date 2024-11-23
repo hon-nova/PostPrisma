@@ -1,37 +1,37 @@
 {
-  "name": "macpostproject_v02",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "tsc --watch & nodemon dist/app.js",
-    "db": "npx prisma db push",
-    "studio": "npx prisma studio"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "body-parser": "^1.20.3",
-    "cookie-parser": "^1.4.7",
-    "cookie-session": "^2.1.0",
-    "ejs": "^3.1.10",
-    "express": "^4.21.1",
-    "express-session": "^1.18.1",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/express-session": "^1.18.0",
-    "@types/node": "^22.9.1",
-    "@types/passport": "^1.0.17",
-    "@types/passport-local": "^1.0.38",
-    "nodemon": "^3.1.7",
-    "prisma": "^5.22.0",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
-  }
+	"name": "macpostproject_v02",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "tsc --watch & nodemon dist/app.js",
+		"db": "npx prisma db push",
+		"studio": "npx prisma studio"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@prisma/client": "^5.22.0",
+		"body-parser": "^1.20.3",
+		"cookie-parser": "^1.4.7",
+		"cookie-session": "^2.1.0",
+		"ejs": "^3.1.10",
+		"express": "^4.21.1",
+		"express-session": "^1.18.1",
+		"passport": "^0.7.0",
+		"passport-local": "^1.0.0"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.0",
+		"@types/express-session": "^1.18.0",
+		"@types/node": "^22.9.1",
+		"@types/passport": "^1.0.17",
+		"@types/passport-local": "^1.0.38",
+		"nodemon": "^3.1.7",
+		"prisma": "^5.22.0",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.19.2",
+		"typescript": "^5.7.2"
+	}
 }

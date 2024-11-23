@@ -22,7 +22,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let postObject = Object.assign(Object.assign({}, post), { creator: yield (0, db_1.getUser)(post.creator) });
         return postObject;
     })));
-    console.log(`posts in root /: `, posts);
+    // console.log(`posts in root /: `, posts)
     const user = yield req.user;
     res.render("posts", { posts, user });
 }));
@@ -64,7 +64,7 @@ router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, func
     const sessionData = req.session.voteData || {};
     const setvoteto = sessionData.setvoteto || 0;
     const updatedNetVotes = sessionData.updatedNetVotes || (0, db_1.netVotesByPost)(postId);
-    console.log("Session data from root /:", { setvoteto, updatedNetVotes });
+    console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
     res.render("individualPost", { post, user: req.user, error, setvoteto, netVotes, updatedNetVotes });
 }));
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

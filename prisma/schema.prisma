@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id       Int       @id @default(autoincrement())
-  uname    String
+  uname    String     @unique
   password String
   Comment  Comment[]
 }
