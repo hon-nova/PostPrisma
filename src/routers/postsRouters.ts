@@ -13,7 +13,6 @@ router.get("/", async (req, res) => {
     creator: getUser(post.creator),    
     };
 	});
-  console.log(`all post in get /:`, posts);
   const user = await req.user;
   res.render("posts", { posts, user });
 });
@@ -44,7 +43,7 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   }
 	let posts = await getPosts();
 
-	const subs = getSubs();
+	const subs = await getSubs();
 	if (!subs.includes(subgroup)) {
 		subs.push(subgroup);
 	}
@@ -57,7 +56,7 @@ router.get("/show/:postid", async (req, res) => {
 
   const error = req.query.error || ''; 
 	const postId = Number(req.params.postid);
-	const post = getPost(postId);
+	const post = await getPost(postId);
   // vote
   const netVotes = netVotesByPost(postId);
   const sessionData = (req.session as any).voteData || {};
@@ -72,7 +71,7 @@ router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
   
   const postId = Number(req.params.postid)
   let post = getPost(postId)
-  console.log(`post in get /edit/:postid`)
+  console.log(`post in get /edit/:postid`, post)
   res.render('editPost', { post:post })
 });
 
@@ -97,7 +96,7 @@ router.get("/deleteconfirm/:postid", ensureAuthenticated, async (req, res) => {
 router.post("/delete/:postid", ensureAuthenticated, async (req, res) => {
   
   const postId = Number(req.params.postid)
-  const post = getPost(postId)
+  const post = await getPost(postId)
 
   deletePost(postId)
 

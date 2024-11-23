@@ -18,21 +18,18 @@ export type TPost = {
 	subgroup: string;
 	timestamp: number;
 }
-export type TComments = {
-	[key:number]: {
-		id: number;
-		post_id: number;
-		creator: number;
-		description: string;
-		timestamp: number;
-	}
+export type TComment = {	
+	id: number;
+	post_id: number;
+	creator: number;
+	description: string;
+	timestamp: number;
 }
-export type TUsers ={
-	[key:number]:{
-		id: number;
-		uname:string;
-		password: string
-	}
+
+export type TUser = {
+	id: number;
+	uname:string;
+	password: string
 }
 
 export type TVotes = { user_id: number; post_id: number; value: number }[];

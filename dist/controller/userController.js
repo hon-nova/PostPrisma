@@ -45,7 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserById = exports.getUserByEmailIdAndPassword = void 0;
 const db = __importStar(require("../db"));
 const getUserByEmailIdAndPassword = (uname, password) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = db.getUserByUsername(uname);
+    let user = yield db.getUserByUsername(uname);
     if (user) {
         if (user.password === password) {
             return user;
@@ -57,7 +57,7 @@ const getUserByEmailIdAndPassword = (uname, password) => __awaiter(void 0, void 
 });
 exports.getUserByEmailIdAndPassword = getUserByEmailIdAndPassword;
 const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = db.getUser(id);
+    let user = yield db.getUser(id);
     return user ? user : null;
 });
 exports.getUserById = getUserById;

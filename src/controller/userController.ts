@@ -1,7 +1,7 @@
 import * as db from '../db'
 
 export const getUserByEmailIdAndPassword = async(uname: string, password: string)=>{
-	let user = db.getUserByUsername(uname)
+	let user = await db.getUserByUsername(uname)
 	if(user){
 		if(user.password === password){
 			return user;
@@ -11,6 +11,6 @@ export const getUserByEmailIdAndPassword = async(uname: string, password: string
 	}
 }
 export const getUserById = async (id: number)=>{
-	let user = db.getUser(id)
+	let user = await db.getUser(id)
 	return user ? user : null
 }

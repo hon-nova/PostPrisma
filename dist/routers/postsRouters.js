@@ -21,7 +21,6 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     posts.map((post) => {
         return Object.assign(Object.assign({}, post), { creator: (0, db_1.getUser)(post.creator) });
     });
-    console.log(`all post in get /:`, posts);
     const user = yield req.user;
     res.render("posts", { posts, user });
 }));
@@ -46,7 +45,7 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
         return res.render('createPosts', { errorMsg });
     }
     let posts = yield (0, db_1.getPosts)();
-    const subs = (0, db_1.getSubs)();
+    const subs = yield (0, db_1.getSubs)();
     if (!subs.includes(subgroup)) {
         subs.push(subgroup);
     }
@@ -57,7 +56,7 @@ router.post("/create", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(
 router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const error = req.query.error || '';
     const postId = Number(req.params.postid);
-    const post = (0, db_1.getPost)(postId);
+    const post = yield (0, db_1.getPost)(postId);
     // vote
     const netVotes = (0, db_1.netVotesByPost)(postId);
     const sessionData = req.session.voteData || {};
@@ -69,7 +68,7 @@ router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, func
 router.get("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = Number(req.params.postid);
     let post = (0, db_1.getPost)(postId);
-    console.log(`post in get /edit/:postid`);
+    console.log(`post in get /edit/:postid`, post);
     res.render('editPost', { post: post });
 }));
 router.post("/edit/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -86,7 +85,7 @@ router.get("/deleteconfirm/:postid", checkAuth_1.ensureAuthenticated, (req, res)
 }));
 router.post("/delete/:postid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = Number(req.params.postid);
-    const post = (0, db_1.getPost)(postId);
+    const post = yield (0, db_1.getPost)(postId);
     (0, db_1.deletePost)(postId);
     return res.redirect(`/subs/show/${post.subgroup}`);
 }));

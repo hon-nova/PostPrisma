@@ -9,19 +9,32 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id    Int     @id @default(autoincrement())
-  uname  String
+  id       Int       @id @default(autoincrement())
+  uname    String
   password String
+  Comment  Comment[]
 }
 
 model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  link      String
-  description   String 
-  creator     Int   
-  subgroup String
-  timestamp Float    @default(dbgenerated("(strftime('%s', 'now') * 1000)"))
+  id          Int       @id @default(autoincrement())
+  title       String
+  link        String
+  description String
+  creator     Int
+  subgroup    String
+  timestamp   Float     @default(dbgenerated("(strftime('%s', 'now') * 1000)"))
+  Comment     Comment[]
 }
 
+model Comment {
+  id          Int    @id @default(autoincrement())
+  post_id     Int
+  creator     Int
+  description String
+  timestamp   Float  @default(dbgenerated("(strftime('%s', 'now') * 1000)"))
+
+  post Post @relation(fields: [post_id], references: [id])
+  user User @relation(fields: [creator], references: [id])
+}

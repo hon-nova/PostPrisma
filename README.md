@@ -1,4 +1,4 @@
-# Introduction to Post Project
+# Intro. to Post Project
 
 ## Key Features:
 
