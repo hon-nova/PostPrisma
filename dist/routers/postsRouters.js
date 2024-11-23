@@ -17,10 +17,12 @@ const router = express_1.default.Router();
 const checkAuth_1 = require("../middleware/checkAuth");
 const db_1 = require("../db");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield (0, db_1.getPosts)(20);
-    posts.map((post) => {
-        return Object.assign(Object.assign({}, post), { creator: (0, db_1.getUser)(post.creator) });
-    });
+    const postss = yield (0, db_1.getPosts)(20);
+    const posts = yield Promise.all(postss.map((post) => __awaiter(void 0, void 0, void 0, function* () {
+        let postObject = Object.assign(Object.assign({}, post), { creator: yield (0, db_1.getUser)(post.creator) });
+        return postObject;
+    })));
+    console.log(`posts in root /: `, posts);
     const user = yield req.user;
     res.render("posts", { posts, user });
 }));

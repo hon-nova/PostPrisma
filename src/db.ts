@@ -27,8 +27,8 @@ const votes: TVotes = [
 function debug() {
   console.log("==== DB DEBUGING ====");
   // console.log("users", users);
-  // console.log("posts", posts);
-  console.log("comments", getComments());
+  // console.log("posts", getPosts());
+  // console.log("comments", getComments());
   // console.log("votes", votes);
   // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
   console.log("==== DB DEBUGING ====");
@@ -44,7 +44,7 @@ async function getUser(id: number) {
 }
 async function getUserByUsername(uname: string) {
   const users = await getUsers()
-  return getUser(
+  return await getUser(
     users.filter((user) => user.uname === uname)[0].id
   );
 }
@@ -84,11 +84,7 @@ async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPos
 async function getUsers():Promise<TUser[]>{
   return await prisma.user.findMany()
 }
-(async()=>{
-  // console.log(`posts: `,await getPosts())
-  // console.log(`users: `, await getUsers())
-  console.log(`comments: `, await getComments())
-})()
+
 
 async function getPost(id: number):Promise<TPost> {
   return decoratePost(await getPost(id));
@@ -187,6 +183,11 @@ async function addComment(post_id: number, creator: number, description: string)
   })
   return comment;
 }
+(async()=>{
+  // console.log(`posts: `,await getPosts())
+  // console.log(`users: `, await getUsers())
+  // console.log(`comments: `, await getComments())
+})()
 
 export {
   debug,

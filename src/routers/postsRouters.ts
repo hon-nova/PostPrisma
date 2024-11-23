@@ -6,13 +6,16 @@ import { TPost } from "../types";
 
 
 router.get("/", async (req, res) => {
-  const posts = await getPosts(20)
-	posts.map((post) => {
-    return {
-    ...post,
-    creator: getUser(post.creator),    
-    };
-	});
+  const postss = await getPosts(20)
+	const posts = await Promise.all(postss.map(async(post) => {
+    let postObject = {      
+        ...post,
+        creator: await getUser(post.creator),    
+        };    
+    return postObject    
+	})
+  );
+  console.log(`posts in root /: `, posts)
   const user = await req.user;
   res.render("posts", { posts, user });
 });

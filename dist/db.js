@@ -50,8 +50,8 @@ const votes = [
 function debug() {
     console.log("==== DB DEBUGING ====");
     // console.log("users", users);
-    // console.log("posts", posts);
-    console.log("comments", getComments());
+    // console.log("posts", getPosts());
+    // console.log("comments", getComments());
     // console.log("votes", votes);
     // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
     console.log("==== DB DEBUGING ====");
@@ -69,7 +69,7 @@ function getUser(id) {
 function getUserByUsername(uname) {
     return __awaiter(this, void 0, void 0, function* () {
         const users = yield getUsers();
-        return getUser(users.filter((user) => user.uname === uname)[0].id);
+        return yield getUser(users.filter((user) => user.uname === uname)[0].id);
     });
 }
 function getVotesForPost(post_id) {
@@ -104,11 +104,6 @@ function getUsers() {
         return yield prisma.user.findMany();
     });
 }
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(`posts: `,await getPosts())
-    // console.log(`users: `, await getUsers())
-    console.log(`comments: `, yield getComments());
-}))();
 function getPost(id) {
     return __awaiter(this, void 0, void 0, function* () {
         return decoratePost(yield getPost(id));
@@ -198,3 +193,8 @@ function addComment(post_id, creator, description) {
         return comment;
     });
 }
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log(`posts: `,await getPosts())
+    // console.log(`users: `, await getUsers())
+    // console.log(`comments: `, await getComments())
+}))();
