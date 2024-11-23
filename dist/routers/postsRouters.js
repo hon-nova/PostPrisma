@@ -117,7 +117,7 @@ router.post('/vote/:postid', checkAuth_1.ensureAuthenticated, (req, res) => __aw
     console.log(`from /vote postid: ${postid}, setvoteto: ${setvoteto}`);
     const sessionData = req.session.voteData || {};
     const currentVote = sessionData.setvoteto || 0;
-    const currentNetVotes = sessionData.updatedNetVotes || (0, db_1.netVotesByPost)(postid);
+    const currentNetVotes = sessionData.updatedNetVotes || (yield (0, db_1.netVotesByPost)(postid));
     console.log(`currentVote: ${currentVote}, currentNetVotes: ${currentNetVotes}`);
     let updatedNetVotes = currentNetVotes;
     if (currentVote === setvoteto) {

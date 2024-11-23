@@ -5,16 +5,15 @@ const prisma = new PrismaClient();
 
 async function getPostByCommentId(commentId:number){
   //step 1: get the comment
-  const comment:TComment = await prisma.comment.findUnique({
+  const comment = await prisma.comment.findUnique({
     where: {
       id: commentId
     }
   })
   //step 2: retrieve post_id = comment.post_id
-  const postId = comment?.post_id
+  const postId = comment?.post_id as number
   //step 3: retrieve post by post_id
-  return await getPost(postId)
-  
+  return await getPost(postId)  
 }
 
 function debug() {
@@ -35,6 +34,7 @@ async function getUser(id: number) {
   })
   return user
 }
+
 async function getUserByUsername(uname: string):Promise<TUser|null> {
   const user = await prisma.user.findUnique({
     where: {
@@ -47,6 +47,7 @@ async function getUserByUsername(uname: string):Promise<TUser|null> {
 async function getVotes():Promise<TVote[]>{
   return await prisma.vote.findMany()
 }
+
 async function getVotesForPost(post_id: number) {
   const votes = await getVotes()
   return votes.filter((vote:TVote) => vote.post_id === post_id)
@@ -88,13 +89,15 @@ async function getUsers():Promise<TUser[]>{
 }
 
 async function getPost(id: number){
-  const post:TPost = await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: {
       id: id
     }
   })
-  // console.log(`post in getPost: `, await post)
-  console.log(`decoratePost in getPost:`, await decoratePost(post))
+  if (!post) {    
+    throw new Error(`Post with ID ${id} not found`);
+  }
+  
   return await decoratePost(post);
 }
 
@@ -156,8 +159,12 @@ async function getSubs() {
   return posts.map((post) => post.subgroup);
 }
 
+async function getComments():Promise<TComment[]>{
+	return prisma.comment.findMany()
+
 async function getComments(){
 	return await prisma.comment.findMany()
+
 }
 async function deleteComment(commentid:number){
   await prisma.comment.delete({
@@ -193,6 +200,8 @@ async function addComment(post_id: number, creator: number, description: string)
   // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
   // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
   // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
+  console.log(`netVotesByPost(1): `, await netVotesByPost(1))
+  console.log(`netVotesByPost(3): `, await netVotesByPost(3))
 })()
 
 export {

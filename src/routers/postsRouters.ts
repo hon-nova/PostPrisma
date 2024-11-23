@@ -143,7 +143,7 @@ router.post('/vote/:postid',ensureAuthenticated,async(req,res)=>{
 	
   const sessionData = (req.session as any).voteData || {};
   const currentVote = sessionData.setvoteto || 0; 
-  const currentNetVotes = sessionData.updatedNetVotes || netVotesByPost(postid);
+  const currentNetVotes = sessionData.updatedNetVotes || await netVotesByPost(postid);
   console.log(`currentVote: ${currentVote}, currentNetVotes: ${currentNetVotes}`);
   let updatedNetVotes = currentNetVotes;
   
