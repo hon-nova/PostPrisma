@@ -12,9 +12,10 @@ datasource db {
 
 model User {
   id       Int       @id @default(autoincrement())
-  uname    String     @unique
+  uname    String    @unique
   password String
   Comment  Comment[]
+  Vote     Vote[]
 }
 
 model Post {
@@ -26,6 +27,7 @@ model Post {
   subgroup    String
   timestamp   Float     @default(dbgenerated("(strftime('%s', 'now') * 1000)"))
   Comment     Comment[]
+  Vote        Vote[]
 }
 
 model Comment {
@@ -37,4 +39,15 @@ model Comment {
 
   post Post @relation(fields: [post_id], references: [id])
   user User @relation(fields: [creator], references: [id])
+}
+
+model Vote {
+  user_id Int
+  post_id Int
+  value   Int
+
+  post Post @relation(fields: [post_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+
+  @@id([post_id, user_id])
 }

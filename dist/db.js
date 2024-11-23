@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.netVotesByPost = void 0;
 exports.debug = debug;
 exports.getUser = getUser;
 exports.getUserByUsername = getUserByUsername;
@@ -25,6 +24,7 @@ exports.getComments = getComments;
 exports.getPostByCommentId = getPostByCommentId;
 exports.deleteComment = deleteComment;
 exports.getVotesForPost = getVotesForPost;
+exports.netVotesByPost = netVotesByPost;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 function getPostByCommentId(commentId) {
@@ -36,17 +36,11 @@ function getPostByCommentId(commentId) {
             }
         });
         //step 2: retrieve post_id = comment.post_id
-        const postId = yield comment.post_id;
+        const postId = comment === null || comment === void 0 ? void 0 : comment.post_id;
         //step 3: retrieve post by post_id
         return yield getPost(postId);
     });
 }
-const votes = [
-    { user_id: 2, post_id: 101, value: +1 },
-    { user_id: 3, post_id: 101, value: +1 },
-    { user_id: 4, post_id: 101, value: +1 },
-    { user_id: 3, post_id: 102, value: -1 },
-];
 function debug() {
     console.log("==== DB DEBUGING ====");
     // console.log("users", users);
@@ -76,15 +70,26 @@ function getUserByUsername(uname) {
         return user;
     });
 }
+function getVotes() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield prisma.vote.findMany();
+    });
+}
 function getVotesForPost(post_id) {
-    return votes.filter((vote) => vote.post_id === post_id) || undefined;
+    return __awaiter(this, void 0, void 0, function* () {
+        const votes = yield getVotes();
+        return votes.filter((vote) => vote.post_id === post_id);
+    });
 }
 function decoratePost(post) {
     return __awaiter(this, void 0, void 0, function* () {
         const comments = yield getComments();
-        const newPost = Object.assign(Object.assign({}, post), { creator: yield getUser(post.id), votes: getVotesForPost(post.id), comments: comments
+        const votes = yield getVotes();
+        const newPost = Object.assign(Object.assign({}, post), { creator: yield getUser(post.id), votes: yield Promise.all(votes
+                .filter((vote) => vote.post_id === post.id)
+                .map((vote) => __awaiter(this, void 0, void 0, function* () { return ({ user: yield getUser(vote.user_id), value: vote.value }); }))), comments: yield Promise.all(comments
                 .filter((comment) => comment.post_id === post.id)
-                .map((comment) => (Object.assign(Object.assign({}, comment), { creator: getUser(comment.creator) }))) });
+                .map((comment) => __awaiter(this, void 0, void 0, function* () { return (Object.assign(Object.assign({}, comment), { creator: yield getUser(comment.creator) })); }))) });
         return newPost;
     });
 }
@@ -115,6 +120,8 @@ function getPost(id) {
                 id: id
             }
         });
+        // console.log(`post in getPost: `, await post)
+        console.log(`decoratePost in getPost:`, yield decoratePost(post));
         return yield decoratePost(post);
     });
 }
@@ -173,19 +180,20 @@ function getComments() {
 }
 function deleteComment(commentid) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield prisma.post.delete({
+        yield prisma.comment.delete({
             where: {
                 id: commentid,
             },
         });
     });
 }
-const netVotesByPost = (postId) => {
-    let votes = getVotesForPost(postId);
-    let netVotes = votes.reduce((acc, { value }) => acc + value, 0);
-    return netVotes;
-};
-exports.netVotesByPost = netVotesByPost;
+function netVotesByPost(postId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let votes = yield getVotesForPost(postId);
+        let netVotes = votes.reduce((acc, { value }) => acc + value, 0);
+        return netVotes;
+    });
+}
 function addComment(post_id, creator, description) {
     return __awaiter(this, void 0, void 0, function* () {
         // comments[id] = comment;
@@ -204,5 +212,7 @@ function addComment(post_id, creator, description) {
     // console.log(`posts: `,await getPosts())
     // console.log(`users: `, await getUsers())
     // console.log(`comments: `, await getComments())
-    console.log('getUserByUsername("alice"):', yield getUserByUsername("alice"));
+    // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
+    // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
+    // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
 }))();

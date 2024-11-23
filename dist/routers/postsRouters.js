@@ -60,10 +60,10 @@ router.get("/show/:postid", (req, res) => __awaiter(void 0, void 0, void 0, func
     const postId = Number(req.params.postid);
     const post = yield (0, db_1.getPost)(postId);
     // vote
-    const netVotes = (0, db_1.netVotesByPost)(postId);
+    const netVotes = yield (0, db_1.netVotesByPost)(postId);
     const sessionData = req.session.voteData || {};
     const setvoteto = sessionData.setvoteto || 0;
-    const updatedNetVotes = sessionData.updatedNetVotes || (0, db_1.netVotesByPost)(postId);
+    const updatedNetVotes = sessionData.updatedNetVotes || (yield (0, db_1.netVotesByPost)(postId));
     console.log("Session data from show/:postid ", { setvoteto, updatedNetVotes });
     res.render("individualPost", { post, user: req.user, error, setvoteto, netVotes, updatedNetVotes });
 }));
@@ -107,7 +107,7 @@ router.post("/comment-create/:postid", checkAuth_1.ensureAuthenticated, (req, re
 router.post("/comment-delete/:commentid", checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const commentid = Number(req.params.commentid);
     const post = yield (0, db_1.getPostByCommentId)(commentid);
-    (0, db_1.deleteComment)(commentid);
+    yield (0, db_1.deleteComment)(commentid);
     return res.redirect(`/posts/show/${post === null || post === void 0 ? void 0 : post.id}`);
 }));
 router.post('/vote/:postid', checkAuth_1.ensureAuthenticated, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

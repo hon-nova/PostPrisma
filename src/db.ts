@@ -1,28 +1,21 @@
-import { TComment , TPost, TPosts, TVotes, TUser } from "./types";
+import { TComment , TPost, TPosts, TVote, TUser } from "./types";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 
-async function getPostByCommentId(commentId:number):Promise<TPost>{
+async function getPostByCommentId(commentId:number){
   //step 1: get the comment
-  const comment = await prisma.comment.findUnique({
+  const comment:TComment = await prisma.comment.findUnique({
     where: {
       id: commentId
     }
   })
   //step 2: retrieve post_id = comment.post_id
-  const postId = await comment.post_id
+  const postId = comment?.post_id
   //step 3: retrieve post by post_id
   return await getPost(postId)
   
 }
-
-const votes: TVotes = [
-  { user_id: 2, post_id: 101, value: +1 },
-  { user_id: 3, post_id: 101, value: +1 },
-  { user_id: 4, post_id: 101, value: +1 },
-  { user_id: 3, post_id: 102, value: -1 },
-];
 
 function debug() {
   console.log("==== DB DEBUGING ====");
@@ -42,7 +35,7 @@ async function getUser(id: number) {
   })
   return user
 }
-async function getUserByUsername(uname: string):Promise<TUser> {
+async function getUserByUsername(uname: string):Promise<TUser|null> {
   const user = await prisma.user.findUnique({
     where: {
       uname: uname,
@@ -51,19 +44,26 @@ async function getUserByUsername(uname: string):Promise<TUser> {
   return user
 }
 
-function getVotesForPost(post_id: number) {
-  return votes.filter((vote) => vote.post_id === post_id) || undefined;
+async function getVotes():Promise<TVote[]>{
+  return await prisma.vote.findMany()
+}
+async function getVotesForPost(post_id: number) {
+  const votes = await getVotes()
+  return votes.filter((vote:TVote) => vote.post_id === post_id)
 }
 
 async function decoratePost(post: TPost) {
   const comments = await getComments();
+  const votes = await getVotes()
   const newPost = {
     ...post,
     creator: await getUser(post.id),
-    votes: getVotesForPost(post.id),
-    comments: comments
+    votes: await Promise.all(votes
+      .filter((vote)=> vote.post_id === post.id)
+      .map(async(vote)=> ({user: await getUser(vote.user_id),value: vote.value}))),
+    comments: await Promise.all(comments     
       .filter((comment:TComment) => comment.post_id === post.id)
-      .map((comment:TComment) => ({ ...comment, creator: getUser(comment.creator) })),
+      .map(async (comment:TComment) => ({ ...comment, creator: await getUser(comment.creator) })))  
   };
   return newPost;
 }
@@ -86,12 +86,14 @@ async function getUsers():Promise<TUser[]>{
   return await prisma.user.findMany()
 }
 
-async function getPost(id: number):Promise<TPost> {
-  const post = await prisma.post.findUnique({
+async function getPost(id: number){
+  const post:TPost = await prisma.post.findUnique({
     where: {
       id: id
     }
   })
+  // console.log(`post in getPost: `, await post)
+  console.log(`decoratePost in getPost:`, await decoratePost(post))
   return await decoratePost(post);
 }
 
@@ -157,15 +159,15 @@ async function getComments(){
 	return prisma.comment.findMany()
 }
 async function deleteComment(commentid:number){
-  await prisma.post.delete({
+  await prisma.comment.delete({
     where: {
       id: commentid,
     },
   });
 }
 
-const netVotesByPost = (postId:number): number=>{
-  let votes = getVotesForPost(postId)
+async function netVotesByPost(postId:number): Promise<number>{
+  let votes = await getVotesForPost(postId)
   let netVotes = votes.reduce((acc,{value})=> acc + value,0)
   
   return netVotes
@@ -187,7 +189,9 @@ async function addComment(post_id: number, creator: number, description: string)
   // console.log(`posts: `,await getPosts())
   // console.log(`users: `, await getUsers())
   // console.log(`comments: `, await getComments())
-  console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
+  // console.log('getUserByUsername("alice"):', await getUserByUsername("alice"))
+  // console.log(`getVotesForPost(1): `, await getVotesForPost(1)) 
+  // console.log(`getVotesForPost(3): `, await getVotesForPost(3)) 
 })()
 
 export {
