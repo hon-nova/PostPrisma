@@ -159,8 +159,17 @@ async function getSubs() {
   return posts.map((post) => post.subgroup);
 }
 
+<<<<<<< HEAD
 async function getComments(){
 	return prisma.comment.findMany()
+=======
+async function getComments():Promise<TComment[]>{
+	return prisma.comment.findMany()
+
+async function getComments(){
+	return await prisma.comment.findMany()
+
+>>>>>>> 7ac3f5a6421d5c9a4d32d4999478ccef2705c677
 }
 async function deleteComment(commentid:number){
   await prisma.comment.delete({
