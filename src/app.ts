@@ -2,7 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import passport from './middleware/passport'
 import path from 'path'
-import { debug } from './fake-db'
+import { debug } from './db'
 const  PORT = process.env.PORT || 8000
 
 

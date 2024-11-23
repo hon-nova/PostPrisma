@@ -1,11 +1,14 @@
 import express from 'express'
-import { getPosts } from '../fake-db'
+import { getPosts } from '../db'
+import { TPost } from '../types'
 
 const router = express.Router()
 
-router.get('/list', (req,res)=>{
-	const list = new Set(getPosts(20).map(post=>post.subgroup))
-	const subs = Array.from(list).sort((a,b)=>a.localeCompare(b))
+router.get('/list', async(req,res)=>{
+	const listss = await getPosts(20)
+	const subgroups = listss.map((post:TPost)=> post.subgroup)
+	const list = new Set(subgroups)
+	const subs = Array.from(list).sort((a:string,b:string)=>a.localeCompare(b))
 	// console.log(`subs: `, subs)
 	res.render('subs',{ subs })
 })

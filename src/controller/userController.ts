@@ -1,4 +1,4 @@
-import * as db from '../fake-db'
+import * as db from '../db'
 
 export const getUserByEmailIdAndPassword = async(uname: string, password: string)=>{
 	let user = db.getUserByUsername(uname)

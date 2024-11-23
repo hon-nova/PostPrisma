@@ -1,5 +1,6 @@
 import { TComments, TPost, TPosts, TUsers, TVotes } from "./types";
-
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 const users: TUsers = {
   1: {
     id: 1,
@@ -79,8 +80,9 @@ const comments: TComments = {
     timestamp: 1642691742010,
   },
 };
-function getPostByCommentId(commentId:number):TPost{
-	return getPosts().filter((post:TPost)=>post.id === comments[commentId].post_id)[0]
+async function getPostByCommentId(commentId:number):Promise<TPost>{
+  let posts = await getPosts()
+	return posts.filter((post:TPost)=>post.id === comments[commentId].post_id)[0]
 }
 
 const votes: TVotes = [
@@ -93,8 +95,8 @@ const votes: TVotes = [
 function debug() {
   console.log("==== DB DEBUGING ====");
   console.log("users", users);
-  // console.log("posts", posts);
-//   console.log("comments", comments);
+  console.log("posts", posts);
+  // console.log("comments", comments);
   // console.log("votes", votes);
   // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
   console.log("==== DB DEBUGING ====");
@@ -130,14 +132,24 @@ function decoratePost(post: TPost) {
  * @param {*} n how many posts to get, defaults to 5
  * @param {*} sub which sub to fetch, defaults to all subs
  */
-function getPosts(n = 5, sub: string | undefined = undefined) {
-  let allPosts = Object.values(posts);
+async function getPosts(n = 5, sub: string | undefined = undefined):Promise<TPost[]> {
+  
+  let allPosts = await prisma.post.findMany()
+  //  set more condition with filter if you will: const posts_filter = await pr  
   if (sub) {
-    allPosts = allPosts.filter((post) => post.subgroup === sub);
-  }
-  allPosts.sort((a, b) => b.timestamp - a.timestamp);
+      allPosts = allPosts.filter((post:TPost) => post.subgroup === sub);
+    }
+  allPosts.sort((a:TPost, b:TPost) => (b.timestamp > a.timestamp ? 1: -1));
   return allPosts.slice(0, n);
+
 }
+async function getUsers():Promise<TUsers[]>{
+  return await prisma.user.findMany()
+}
+(async()=>{
+  console.log(`posts: `,await getPosts())
+  console.log(`users: `, await getUsers())
+})()
 
 function getPost(id: number) {
   return decoratePost(posts[id]);
@@ -160,7 +172,17 @@ function addPost(
     subgroup,
     timestamp: Date.now(),
   };
-  posts[id] = post;
+  // posts[id] = post;
+  prisma.post.create({
+    data: {      
+      title,      
+      link,
+      description,
+      creator: Number(creator),
+      subgroup,
+      timestamp: BigInt(Date.now()),
+    },
+  });
   return post;
 }
 

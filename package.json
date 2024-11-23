@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {    
-    "start":"tsc --watch & nodemon dist/app.js",
-    "db":"npx prisma db push",
-    "studio":"npx prisma studio"
+  "scripts": {
+    "start": "tsc --watch & nodemon dist/app.js",
+    "db": "npx prisma db push",
+    "studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +31,7 @@
     "nodemon": "^3.1.7",
     "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.3"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }

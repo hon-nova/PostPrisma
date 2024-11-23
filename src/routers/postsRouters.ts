@@ -1,17 +1,20 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middleware/checkAuth";
-import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, getPostByCommentId, deleteComment, addComment, deletePost, getVotesForPost, netVotesByPost } from "../fake-db";
+import { getPosts, getUser, getPost, getSubs, addPost,editPost, getComments, getPostByCommentId, deleteComment, addComment, deletePost, getVotesForPost, netVotesByPost } from "../db";
+import { TPost } from "../types";
 
 
 router.get("/", async (req, res) => {
-	const posts = await getPosts(20).map((post) => {
+  const posts = await getPosts(2)
+	posts.map((post) => {
     return {
     ...post,
     creator: getUser(post.creator),
     currentNetVotes: netVotesByPost(post.id),
     };
 	});
+  console.log(`all post in get /:`, posts);
   const user = await req.user;
   res.render("posts", { posts, user });
 });
@@ -40,13 +43,13 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   if(Object.keys(errorMsg).length > 0){
      return res.render('createPosts',{ errorMsg })
   }
-	let posts = getPosts();
+	let posts = await getPosts();
 
 	const subs = getSubs();
 	if (!subs.includes(subgroup)) {
 		subs.push(subgroup);
 	}
-	let newPost = addPost(title, link, userId, description, subgroup);
+	let newPost: TPost = await addPost(title, link, userId, description, subgroup);
 	posts.unshift(newPost);
 	return res.redirect(`/posts/show/${newPost.id}`); 
 });
@@ -124,9 +127,9 @@ router.post(
   ensureAuthenticated,
   async (req, res) => {
     const commentid = Number(req.params.commentid);
-    const post = getPostByCommentId(commentid);
-    deleteComment(commentid);
-    return res.redirect(`/posts/show/${post.id}`);
+    const post = await getPostByCommentId(commentid);
+    deleteComment(commentid);    
+    return res.redirect(`/posts/show/${post?.id}`);
   }
 );
 

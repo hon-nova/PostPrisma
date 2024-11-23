@@ -115,9 +115,9 @@ const votes = [
 ];
 function debug() {
     console.log("==== DB DEBUGING ====");
-    // console.log("users", users);
+    console.log("users", users);
     console.log("posts", posts);
-    console.log("comments", comments);
+    // console.log("comments", comments);
     // console.log("votes", votes);
     // console.log(`getPostByCommentId(9003): `,getPostByCommentId(9003))
     console.log("==== DB DEBUGING ====");
@@ -144,16 +144,22 @@ function decoratePost(post) {
 function getPosts() {
     return __awaiter(this, arguments, void 0, function* (n = 5, sub = undefined) {
         let allPosts = yield prisma.post.findMany();
-        //  set more condition with filter if you will: const posts_filter = await pr
+        //  set more condition with filter if you will: const posts_filter = await pr  
         if (sub) {
             allPosts = allPosts.filter((post) => post.subgroup === sub);
         }
-        allPosts.sort((a, b) => b.timestamp - a.timestamp);
+        allPosts.sort((a, b) => (b.timestamp > a.timestamp ? 1 : -1));
         return allPosts.slice(0, n);
     });
 }
+function getUsers() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield prisma.user.findMany();
+    });
+}
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`all posts: `, yield getPosts());
+    console.log(`posts: `, yield getPosts());
+    console.log(`users: `, yield getUsers());
 }))();
 function getPost(id) {
     return decoratePost(posts[id]);
@@ -177,7 +183,7 @@ function addPost(title, link, creator, description, subgroup) {
             description,
             creator: Number(creator),
             subgroup,
-            timestamp: Date.now(),
+            timestamp: BigInt(Date.now()),
         },
     });
     return post;
